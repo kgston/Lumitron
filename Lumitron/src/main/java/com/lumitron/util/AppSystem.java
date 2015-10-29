@@ -12,20 +12,21 @@ public class AppSystem implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
-        log("Lumitron powering down");
+        log(this.getClass(), "Lumitron powering down");
     }
 
     @Override
     public void contextInitialized(ServletContextEvent arg0) {
-        log("Lumitron powering up");
+        log(this.getClass(), "Lumitron powering up");
     }
     
     /**
      * Writes log to the console. Use this method for logs so we can adjust it as necessary
+     * @param <T>
      * @param message The message to report
      */
-    public static void log(String message) {
-        System.out.println(message);
+    public static <T> void log(Class<T> classObj, String message) {
+        System.out.println(classObj.getName() + message);
     }
 
 }

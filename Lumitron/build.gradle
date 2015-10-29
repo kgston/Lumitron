@@ -42,6 +42,11 @@ dependencies {
     //Servlet API
     compile 'jetty:servlet-api:2.5-6.0.2'
     compile 'tomcat:servlet-api:5.5.23'
+    //WebSocket API
+    compile 'org.apache.tomcat:tomcat7-websocket:7.0.65'
+    compile 'org.eclipse.jetty.websocket:websocket-core:9.0.0.M2'
+    compile 'org.eclipse.jetty.websocket:websocket-server:9.3.5.v20151012'
+    
 
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the

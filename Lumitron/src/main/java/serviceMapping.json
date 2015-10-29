@@ -1,0 +1,11 @@
+//Service Mapping file
+{
+    //Domain Name
+    led: {
+        //Service Name
+        getAvaliableControllers: {
+            class: "", //Fully qualified class name
+            method: "" //method name, case sensitive
+        }
+    }
+};
