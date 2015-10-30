@@ -30,11 +30,12 @@ While no one really like to follow rules, let try to keep a few important ones t
 2. Install all prerequsites (or use your existing ones)
 3. Open Eclipse (I'm using Mars) > File > Import
 4. Choose Gradle > Gradle Project
-5. Set the folder Lumitron as the project root > Next
-6. Set your Gradle home (I'm using v2.8)
-7. Set your JDK home (I'm using 1.7.0_79)
-8. If its not already there, open the Gradle Tasks view at Window > Show View > Others. Select Gradle > Gradle Tasks
-9. You should be able to see all project tasks in the view. Double click tomcatRun to start the webserver
+5. Set the folder Lumitron as the project root > Click Build Model button (top right corner) > Select project > Finish
+6. Go to Window > Preference > Gradle > Set your Gradle home (I'm using v2.8)
+7. Under Gradle/Arguments > Set your Workspace JRE (I'm using 1.7.0_79)
+8. Go to Gradle EnIDE > Set your Gradle home and JAVA_HOME
+9. If its not already there, open the Gradle Tasks view at Window > Show View > Others. Select Gradle > Gradle Tasks
+10. You should be able to see all project tasks in the view. Double click tomcatRun to start the webserver
   * If you are hardcore and like CLI interface, go to the project root and run 
   ```Batchfile
   gradle tomcatRun
@@ -45,7 +46,8 @@ While no one really like to follow rules, let try to keep a few important ones t
   * `clean` - To clean the build dir
   * `build` - To rebuild class files
   * `war` - Packages a WAR file into build/lib
-10. App is accessable at <http://localhost:8080/Lumitron>
+11. App is accessable at <http://localhost:8080/Lumitron>
+12. If you have eclipse project issues, go to the Gradle Tasks window abd run the eclipseClasspath task. E.g. If it complains it cannot find class or etc...
 
 ## Final notes
 While I sometimes like to think I'm a coding god, reality is tougher than it seems... So like everyone else, I'm learning new things everyday. And while I'm supposed to "lead" the project, I'll probably make rookie mistakes every now and then or ask stupid questions during pull request, so please be patient with me. I'll try to be smart 80% of the time.. haha... :D
