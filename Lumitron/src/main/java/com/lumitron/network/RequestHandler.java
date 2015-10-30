@@ -51,13 +51,8 @@ public class RequestHandler {
     @OnClose
     public void closedConnection(Session session) {
         /* Remove this connection from the queue */
-        try {
-            queue.remove(session);
-            session.getBasicRemote().sendText(newReceipt("close", true));
-            AppSystem.log(this.getClass(), "Connection closed");
-        } catch(IOException ioe) {
-            AppSystem.log(this.getClass(), "Unable to send receipt for new connection");
-        }
+        queue.remove(session);
+        AppSystem.log(this.getClass(), "Connection closed");
     }
     
     @OnError
@@ -111,6 +106,7 @@ public class RequestHandler {
             }).start();
     }
     
+    @SuppressWarnings("unchecked")
     private static HashMap<String, Object> parseRequest(String requestString) {
         return new Gson().fromJson(requestString, HashMap.class);
     }

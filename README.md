@@ -6,7 +6,8 @@ View all tasks here --> <https://www.pivotaltracker.com/n/projects/1462924>
 
 ## Prerequesites
 1. [Eclipse](https://eclipse.org/downloads/) (for development only)
-2. [Eclipse Buildship Plugin](http://marketplace.eclipse.org/content/buildship-gradle-integration) (for development only)
+2. [Gradle IDE Pack](http://marketplace.eclipse.org/content/gradle-ide-pack) (for development only)
+    *If you already installed the previous Buildship one, I recommend this instead. It is faster to run from eclipse and has less bugs*
 3. [Gradle](http://gradle.org/download) (for development only)
 4. [Java JDK 1.7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
 
@@ -33,7 +34,17 @@ While no one really like to follow rules, let try to keep a few important ones t
 6. Set your Gradle home (I'm using v2.8)
 7. Set your JDK home (I'm using 1.7.0_79)
 8. If its not already there, open the Gradle Tasks view at Window > Show View > Others. Select Gradle > Gradle Tasks
-9. You should be able to see all project tasks in the view. Double click jettyEclipseRun to start the webserver
+9. You should be able to see all project tasks in the view. Double click tomcatRun to start the webserver
+  * If you are hardcore and like CLI interface, go to the project root and run 
+  ```Batchfile
+  gradle tomcatRun
+  ```
+  *Assuming that you have set gradle/bin in your path*
+  * A few other useful commands
+  `tomcatStop` - Stop the tomcat server (run from another terminal instance)
+  `clean` - To clean the build dir
+  `build` - To rebuild class files
+  `war` - Packages a WAR file into build/lib
 10. App is accessable at <http://localhost:8080/Lumitron>
 
 ## Final notes

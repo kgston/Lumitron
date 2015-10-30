@@ -26,7 +26,7 @@ public class AppSystem implements ServletContextListener {
      * @param message The message to report
      */
     public static <T> void log(Class<T> classObj, String message) {
-        System.out.println(classObj.getName() + message);
+        System.out.println("<" + classObj.getSimpleName() + ">  " + message);
     }
 
 }
