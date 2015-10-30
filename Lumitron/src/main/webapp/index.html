@@ -3,11 +3,16 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Lumitron</title>
+	<title>Lumitron</title>
+	
+	<script src="js/jquery-2.1.4.js"></script>
+    <script src="js/RequestController.js"></script>
 </head>
 
 <body>
-Hello World
+    <div id="state">Hello World</div>
+    <button onclick="webSocket.start()">Open connection to server</button>
+    <button onclick="webSocket.stop()">Close connection to server</button>
 </body>
 
 </html>
