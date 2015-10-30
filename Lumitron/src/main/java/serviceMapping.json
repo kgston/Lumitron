@@ -7,5 +7,19 @@
             class: "", //Fully qualified class name
             method: "" //method name, case sensitive
         }
+    },
+    music: {
+        //Service Name
+        getAvaliableControllers: {
+            class: "", //Fully qualified class name
+            method: "" //method name, case sensitive
+        }
+    },
+    project: {
+        //Service Name
+        getAvaliableControllers: {
+            class: "", //Fully qualified class name
+            method: "" //method name, case sensitive
+        }
     }
 };
