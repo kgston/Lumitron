@@ -41,10 +41,10 @@ While no one really like to follow rules, let try to keep a few important ones t
   ```
   *Assuming that you have set gradle/bin in your path*
   * A few other useful commands
-  `tomcatStop` - Stop the tomcat server (run from another terminal instance)
-  `clean` - To clean the build dir
-  `build` - To rebuild class files
-  `war` - Packages a WAR file into build/lib
+  * `tomcatStop` - Stop the tomcat server (run from another terminal instance)
+  * `clean` - To clean the build dir
+  * `build` - To rebuild class files
+  * `war` - Packages a WAR file into build/lib
 10. App is accessable at <http://localhost:8080/Lumitron>
 
 ## Final notes
