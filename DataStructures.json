@@ -91,6 +91,21 @@ request = {
     },
     params: {
         device: "Lagute-0001",
+        command: "transitionToColour",
+        colour: "FF00FF",
+        pauseInterval: "3",
+        incrementInterval: "1"
+    }
+}
+webSocket.send(request);
+
+request = {
+    serviceRoute: {
+        domain: "led",
+        service: "sendCommand"
+    },
+    params: {
+        device: "Lagute-0001",
         command: "off"
     }
 }

@@ -115,7 +115,7 @@ public class RequestHandler {
             AppSystem.log(RequestHandler.class, "Domain and/or service name mismatch");
             AppSystem.log(RequestHandler.class, e.getMessage());
             e.printStackTrace();
-            sendError(uuid, "0001", "Requested service not found");
+            sendError(uuid, this.getClass().getSimpleName(), "0001", "Requested service not found");
             return;
         }
         
@@ -128,20 +128,20 @@ public class RequestHandler {
             method.invoke(service);
         } catch (NoSuchMethodException e) {
             AppSystem.log(RequestHandler.class, "Error in service mapping, method not found");
-            sendError(uuid, "0002", "Service configuration error");
+            sendError(uuid, this.getClass().getSimpleName(), "0002", "Service configuration error");
         } catch (SecurityException e) {
             AppSystem.log(RequestHandler.class, "Security voilation");
-            sendError(uuid, "0003", "Security voilation");
+            sendError(uuid, this.getClass().getSimpleName(), "0003", "Security voilation");
         } catch (IllegalAccessException e) {
             AppSystem.log(RequestHandler.class, "Error accessing method in service");
-            sendError(uuid, "0002", "Service configuration error");
+            sendError(uuid, this.getClass().getSimpleName(), "0002", "Service configuration error");
         } catch (IllegalArgumentException e) {
             AppSystem.log(RequestHandler.class, "Invalid parameters");
-            sendError(uuid, "0002", "Service configuration error");
+            sendError(uuid, this.getClass().getSimpleName(), "0002", "Service configuration error");
         } catch (InvocationTargetException e) {
             AppSystem.log(RequestHandler.class, "Error executing service: " + e.getCause().getMessage());
             e.getCause().printStackTrace();
-            sendError(uuid, "0004", "Error executing service");
+            sendError(uuid, this.getClass().getSimpleName(), "0004", "Error executing service");
         }
     }
     
@@ -157,7 +157,7 @@ public class RequestHandler {
         send(uuid, "receipt", null, false);
     }
     
-    public static void sendError(String uuid, String errorCode, String errorMessage) {
+    public static void sendError(String uuid, String orignClass, String errorCode, String errorMessage) {
         HashMap<String, String> error = new HashMap<>();
         error.put("errorCode", errorCode);
         error.put("errorMessage", errorMessage);

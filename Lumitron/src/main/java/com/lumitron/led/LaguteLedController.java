@@ -10,7 +10,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import com.lumitron.util.AppSystem;
 
-public class LaguteLedController extends GenericLedController implements LedController {
+public class LaguteLedController extends GenericLedController {
     
     private DatagramSocket connection;
     
@@ -57,7 +57,7 @@ public class LaguteLedController extends GenericLedController implements LedCont
             }
         } catch (SocketException e) {
             AppSystem.log(this.getClass(), "Failed to connect! " + e.getMessage());
-            throw new LedException("0010", "Unable to connect to device");
+            throw new LedException(this.getClass().getSimpleName(), "0012", "Unable to connect to device");
         }
     }
     
@@ -108,19 +108,20 @@ public class LaguteLedController extends GenericLedController implements LedCont
 
     @Override
     public void setColour(String hexColourString) throws LedException {
-        if(hexColourString == null || hexColourString.length() == 6) {
-            throw new LedException("0008", "Hex colour not valid");
+        if(hexColourString == null || hexColourString.length() != 6) {
+            throw new LedException(this.getClass().getSimpleName(), "0010", "Hex colour not valid");
         }
-        System.out.println("Setting " + deviceName + " colour to: " + hexColourString);
+        AppSystem.log(this.getClass(), "Setting " + deviceName + " colour to: " + hexColourString);
         send(HEADER + "070503" + hexColourString + FOOTER, false);
+        currentHexColour = hexColourString;
     }
     
     @Override
     public void setBrightness(String brightnessLevel) throws LedException {
         if(brightnessLevel == null || brightnessLevel.length() == 0) {
-            throw new LedException("0009", "Device name not specified");
+            throw new LedException(this.getClass().getSimpleName(), "0009", "Device name not specified");
         }
-        System.out.println("Setting " + deviceName + " brightness to: " + brightnessLevel + "%");
+        AppSystem.log(this.getClass(), "Setting " + deviceName + " brightness to: " + brightnessLevel + "%");
         String levelHex = Integer.toHexString(Integer.parseInt(brightnessLevel));
         if(levelHex.length() == 1) {
             levelHex = "0" + levelHex;
@@ -149,9 +150,8 @@ public class LaguteLedController extends GenericLedController implements LedCont
             AppSystem.log(this.getClass(), "Error sending data " + hexCommand + " to " + deviceName);
             AppSystem.log(this.getClass(), "Failed with error: " + e.getMessage());
             e.printStackTrace();
-            throw new LedException("0011", "Unable to send data to device");
+            throw new LedException(this.getClass().getSimpleName(), "0011", "Unable to send data to device");
         }
         return null;
     }
-
 }

@@ -16,5 +16,7 @@ public interface LedController {
     
     public void setColour(String hexString) throws LedException;
     
+    public void transitionToColour(String pauseInterval, String incrementInterval, String hexColourString) throws LedException;
+    
     public void setBrightness(String brightnessLevel) throws LedException;
 }

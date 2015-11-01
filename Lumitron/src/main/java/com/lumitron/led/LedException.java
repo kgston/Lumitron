@@ -6,8 +6,8 @@ public class LedException extends LumitronException {
     
     private static final long serialVersionUID = -1816339581698138905L;
     
-    public LedException(String errorCode, String message) {
-        super(errorCode, message);
+    public LedException(String originClass, String errorCode, String message) {
+        super(originClass, errorCode, message);
     }
     
 }

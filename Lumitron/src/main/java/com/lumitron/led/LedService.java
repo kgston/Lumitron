@@ -1,5 +1,6 @@
 package com.lumitron.led;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -26,6 +27,7 @@ public class LedService implements RequestData {
         } catch (LedException e) {
             RequestHandler.sendError(
                             (String) requestData.get("serviceRoute").get("uuid"), 
+                            this.getClass().getSimpleName(),
                             e.getErrorCode(),
                             e.getMessage());
         }
@@ -34,23 +36,28 @@ public class LedService implements RequestData {
     public void sendCommand() {
         try {
             HashMap<String, String> params = getParams();
-            String[] commandParameters = null;
+            ArrayList<String> commandParameters = new ArrayList<>();
             switch(params.get("command")) {
+                case "transitionToColour": 
+                    commandParameters.add(params.get("pauseInterval"));
+                    commandParameters.add(params.get("incrementInterval"));
                 case "setColour": 
-                    commandParameters = new String[] {params.get("colour")};
+                    commandParameters.add(params.get("colour"));
                     break;
                 case "setBrightness": 
-                    commandParameters = new String[] {params.get("brightness")};
+                    commandParameters.add(params.get("brightness"));
                     break;   
             }
+            String[] commandParametersAry = new String[commandParameters.size()];
             LedMaster.sendCommand(
                             params.get("device"),
                             params.get("command"),
-                            commandParameters
+                            commandParameters.toArray(commandParametersAry)
                             );
         } catch (LedException e) {
             RequestHandler.sendError(
                             (String) requestData.get("serviceRoute").get("uuid"), 
+                            this.getClass().getSimpleName(),
                             e.getErrorCode(),
                             e.getMessage());
         }
