@@ -1,0 +1,97 @@
+//Request Structure
+{
+    serviceRoute: {
+        domain: "Domain name defined in mapping",
+        service: "Service name defined in mapping"
+        uuid: "Auto injected during request handling"
+    },
+    params: {
+        key: "Data to pass in"
+    }
+}
+
+//Response Structure
+{
+    uuid: "Request UUID",
+    type: "receipt" || "response",
+    success: true || false,
+    //If response
+    response: Object,
+    //If success === false
+    error: {
+        code: int, //For application use
+        msg: String //UI friendly
+    }
+}
+
+
+
+var request = null;
+request = {
+    serviceRoute: {
+        domain: "led",
+        service: "getAvaliableControllers"
+    }
+}
+webSocket.send(request);
+
+request = {
+    serviceRoute: {
+        domain: "led",
+        service: "addController"
+    },
+    params: {
+        deviceName: "Lagute-0001"
+    }
+}
+webSocket.send(request);
+
+request = {
+    serviceRoute: {
+        domain: "led",
+        service: "sendCommand"
+    },
+    params: {
+        device: "Lagute-0001",
+        command: "on"
+    }
+}
+webSocket.send(request);
+
+request = {
+    serviceRoute: {
+        domain: "led",
+        service: "sendCommand"
+    },
+    params: {
+        device: "Lagute-0001",
+        command: "setColour",
+        colour: "00FF00"
+    }
+}
+webSocket.send(request);
+
+request = {
+    serviceRoute: {
+        domain: "led",
+        service: "sendCommand"
+    },
+    params: {
+        device: "Lagute-0001",
+        command: "setBrightness",
+        brightness: "50"
+    }
+}
+webSocket.send(request);
+
+request = {
+    serviceRoute: {
+        domain: "led",
+        service: "sendCommand"
+    },
+    params: {
+        device: "Lagute-0001",
+        command: "off"
+    }
+}
+webSocket.send(request);

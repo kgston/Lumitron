@@ -1,0 +1,37 @@
+//Service Mapping file
+{
+    //Domain Name
+    led: {
+        //Service Name
+    	getAvaliableControllers: {
+            serviceClass: "com.lumitron.led.LedService", //Fully qualified class name
+            method: "getAvaliableControllers" //method name, case sensitive
+        },
+        getRegisteredControllers: {
+        	serviceClass: "com.lumitron.led.LedService", //Fully qualified class name
+        	method: "getRegisteredControllers" //method name, case sensitive
+        },
+        addController: {
+            serviceClass: "com.lumitron.led.LedService", //Fully qualified class name
+            method: "addController" //method name, case sensitive
+        },
+        sendCommand: {
+            serviceClass: "com.lumitron.led.LedService", //Fully qualified class name
+            method: "sendCommand" //method name, case sensitive
+        }
+    },
+    music: {
+        //Service Name
+        getAvaliableControllers: {
+        	serviceClass: "", //Fully qualified class name
+            method: "" //method name, case sensitive
+        }
+    },
+    project: {
+        //Service Name
+        getAvaliableControllers: {
+        	serviceClass: "", //Fully qualified class name
+            method: "" //method name, case sensitive
+        }
+    }
+}
