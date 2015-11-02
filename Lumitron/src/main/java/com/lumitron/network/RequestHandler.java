@@ -316,7 +316,7 @@ public class RequestHandler {
      * @param uuid The request UUID
      * @param type Type of response. Currently only "receipt", "response" and "error" is supported
      * @param responseDetails The details of the response or error. If there are not response, just pass null. Receipts do not send responses.
-     * @return
+     * @return The response formatted as JSON
      */
     private static String newResponse(String uuid, String type, Object responseDetails) {
         HashMap<String, Object> response = new HashMap<>();
