@@ -19,8 +19,9 @@
     response: Object,
     //If success === false
     error: {
-        code: int, //For application use
-        msg: String //UI friendly
+        origin: "Origin class throwing this error"
+        code: "Error code", //For application use
+        msg: "Error message" //UI friendly
     }
 }
 
