@@ -343,7 +343,7 @@ public class RequestHandler {
                 response.put("type", "error");
                 response.put("success", false);
                 if(responseDetails != null) {
-                    response.put("response", responseDetails);
+                    response.put("error", responseDetails);
                 }
                 break;
         }

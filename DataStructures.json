@@ -3,7 +3,7 @@
     serviceRoute: {
         domain: "Domain name defined in mapping",
         service: "Service name defined in mapping"
-        uuid: "Auto injected during request handling"
+        uuid: "Auto injected from client during request handling"
     },
     params: {
         key: "Data to pass in"
@@ -13,7 +13,7 @@
 //Response Structure
 {
     uuid: "Request UUID",
-    type: "receipt" || "response",
+    type: "receipt" || "response" || "error",
     success: true || false,
     //If response
     response: Object,
