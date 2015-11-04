@@ -31,12 +31,12 @@ public class LedMaster {
         //Populate all found devices to the deviceMap
     }
     
-    public static TreeSet<String> getAvaliableControllers() {
-        refreshAvaliableControllers();
+    public static TreeSet<String> getAvailableControllers() {
+        refreshAvailableControllers();
         return new TreeSet<String>(avaliableControllers.keySet());
     }
     
-    private static void refreshAvaliableControllers() {
+    private static void refreshAvailableControllers() {
         //TODO Implement search for controllers on WiFi network
         HashMap<String, String> deviceInfo = new HashMap<>();
         deviceInfo.put("ipAddress", "10.10.10.10");
@@ -90,7 +90,7 @@ public class LedMaster {
         if(ledController == null) {
             //Quickly! See if its floating around somewhere!
             AppSystem.log(LedMaster.class, deviceName + " was not registered, attempting to add from avaliable list");
-            TreeSet<String> avaliableControllers =  getAvaliableControllers();
+            TreeSet<String> avaliableControllers =  getAvailableControllers();
             //Phew! Found it~! Let's register it and get on with it
             if(avaliableControllers.contains(deviceName)) {
                 AppSystem.log(LedMaster.class, deviceName + " was automatically registered");

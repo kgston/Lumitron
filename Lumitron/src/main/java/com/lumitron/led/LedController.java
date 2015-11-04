@@ -2,7 +2,7 @@ package com.lumitron.led;
 
 
 public interface LedController {
-    public boolean queryStaus() throws LedException;
+    public boolean queryStatus() throws LedException;
     
     public void on() throws LedException;
     

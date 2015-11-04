@@ -6,11 +6,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Queue;
 import java.util.Scanner;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -41,8 +38,6 @@ public class RequestHandler {
     private static HashMap<String, HashMap<String, HashMap<String, String>>> serviceMap = new HashMap<>();
     //Service Mapping Properties Filepath
     private static final String SERVICE_MAPPING_PROPERTIES_FILE = "serviceMapping.json";
-    //Stores all active sessions
-    private static Queue<Session> queue = new ConcurrentLinkedQueue<>();
     
     //This blocks runs only once when the class is first loaded
     static {
@@ -81,7 +76,6 @@ public class RequestHandler {
     public void openConnection(Session session) {
         //Register this connection in the queue
         try {
-            queue.add(session);
             session.getBasicRemote().sendText(newResponse("Open connection", "receipt", null));
             AppSystem.log(this.getClass(), "Connection opened");
         } catch(IOException ioe) {
@@ -95,8 +89,6 @@ public class RequestHandler {
      */
     @OnClose
     public void closedConnection(Session session) {
-        //Remove this connection from the queue
-        queue.remove(session);
         AppSystem.log(this.getClass(), "Connection closed");
     }
     
@@ -107,8 +99,6 @@ public class RequestHandler {
      */
     @OnError
     public void error(Session session, Throwable t) {
-        //Remove this connection from the queue
-        queue.remove(session);
         AppSystem.log(this.getClass(), "Connection error: " + t.getMessage());
         t.printStackTrace();
     }
@@ -119,100 +109,124 @@ public class RequestHandler {
      * @param session The incoming client session
      */
     @OnMessage
-    public void onMessage(String message, Session session) {
-        //Convert the JSON message to a native format
-        HashMap<String, HashMap<String, String>> request = parseRequest(message);
-        HashMap<String, String> serviceRoute = request.get("serviceRoute");
-        HashMap<String, String> params = request.get("params");
-        
-        //Check for a uuid in request
-        String uuid = null;
-        if(!serviceRoute.containsKey("uuid")) {
-            uuid = UUID.randomUUID().toString(); //Create one if not found
-            serviceRoute.put("uuid", uuid); //Put the uuid into the request
+    public void onMessage(final String message, final Session session) {
+        (new Thread() {
+            public void run() {
+                //Convert the JSON message to a native format
+                HashMap<String, HashMap<String, String>> request = parseRequest(message);
+                HashMap<String, String> serviceRoute = request.get("serviceRoute");
+                HashMap<String, String> params = request.get("params");
+                
+                //Check for a uuid in request
+                String uuid = null;
+                if(!serviceRoute.containsKey("uuid")) {
+                    uuid = UUID.randomUUID().toString(); //Create one if not found
+                    serviceRoute.put("uuid", uuid); //Put the uuid into the request
+                } else {
+                    uuid = serviceRoute.get("uuid"); //Otherwise use the provided one
+                }
+                //Store the session for later delivery
+                deliveryMap.put(uuid, session);
+                
+                //Return a receipt to the client
+                sendReceipt(uuid);
+                
+                //Invoke the service requested
+                HashMap<String, String> serviceInfo = serviceMap.get(serviceRoute.get("domain")).get(serviceRoute.get("service"));
+                AppSystem.log(this.getClass(), "Receiving request for: " + serviceInfo);
+                AppSystem.log(this.getClass(), "With the following params: " + params);
+                
+                String serviceClassName = serviceMap.get(serviceRoute.get("domain")).get(serviceRoute.get("service")).get("serviceClass");
+                Class<?> serviceClass = null;
+                LumitronService service = null;
+                try {
+                    //Dynamically instantiate the class
+                    serviceClass = Class.forName(serviceClassName);
+                    Constructor<?> serviceClassConstructor = serviceClass.getConstructor();
+                    service = (LumitronService) serviceClassConstructor.newInstance();
+                } catch (ClassNotFoundException classEx) {
+                    AppSystem.log(RequestHandler.class, "Domain name mismatch");
+                    classEx.printStackTrace();
+                    sendError(uuid, this.getClass().getSimpleName(), "0001", "Requested service not found");
+                    return;
+                } catch (NoSuchMethodException methodEx) {
+                    AppSystem.log(RequestHandler.class, "Service name mismatch");
+                    methodEx.printStackTrace();
+                    sendError(uuid, this.getClass().getSimpleName(), "0001", "Requested service not found");
+                    return;
+                } catch (SecurityException securityEx) {
+                    AppSystem.log(RequestHandler.class, "Security voilation");
+                    securityEx.printStackTrace();
+                    sendError(uuid, this.getClass().getSimpleName(), "0003", "Security voilation");
+                    return;
+                } catch (InstantiationException instantiateEx) {
+                    AppSystem.log(RequestHandler.class, "Unable to instantiate " + serviceClassName);
+                    instantiateEx.printStackTrace();
+                    sendError(uuid, this.getClass().getSimpleName(), "0002", "Instantiation failure");
+                    return;
+                } catch (IllegalAccessException accessEx) {
+                    AppSystem.log(RequestHandler.class, "Security voilation");
+                    accessEx.printStackTrace();
+                    sendError(uuid, this.getClass().getSimpleName(), "0003", "Security voilation");
+                } catch (IllegalArgumentException arguementEx) {
+                    AppSystem.log(RequestHandler.class, "Incorrect constructor auguement for " + serviceClassName);
+                    arguementEx.printStackTrace();
+                    sendError(uuid, this.getClass().getSimpleName(), "0002", "Instantiation failure");
+                } catch (InvocationTargetException e) {
+                    LumitronException cause = (LumitronException) e.getCause();
+                    AppSystem.log(RequestHandler.class, 
+                            "Error creating service [" + cause.getOriginClass() + "]: " + cause.getErrorCode() + " " + cause.getMessage());
+                    cause.printStackTrace();
+                    sendError(uuid, cause.getOriginClass(), cause.getErrorCode(), cause.getMessage());
+                }
+                
+                //Inject the request data into the service object
+                service.setRequestData(request);
+                
+                //Dynamically invoke the method
+                try {
+                    Method method = service.getClass().getMethod(serviceInfo.get("method"));
+                    method.invoke(service);
+                } catch (NoSuchMethodException e) {
+                    AppSystem.log(RequestHandler.class, "Error in service mapping, method not found");
+                    sendError(uuid, this.getClass().getSimpleName(), "0004", "Service configuration error");
+                } catch (SecurityException e) {
+                    AppSystem.log(RequestHandler.class, "Security voilation");
+                    sendError(uuid, this.getClass().getSimpleName(), "0003", "Security voilation");
+                } catch (IllegalAccessException e) {
+                    AppSystem.log(RequestHandler.class, "Error accessing method in service");
+                    sendError(uuid, this.getClass().getSimpleName(), "0004", "Service configuration error");
+                } catch (IllegalArgumentException e) {
+                    AppSystem.log(RequestHandler.class, "Invalid parameters");
+                    sendError(uuid, this.getClass().getSimpleName(), "0004", "Service configuration error");
+                } catch (InvocationTargetException e) {
+                    if(e.getCause() instanceof LumitronException) {
+                        LumitronException cause = (LumitronException) e.getCause();
+                        AppSystem.log(RequestHandler.class, 
+                                "Error executing service [" + cause.getOriginClass() + "]: " + cause.getErrorCode() + " " + cause.getMessage());
+                        cause.printStackTrace();
+                        sendError(uuid, cause.getOriginClass(), cause.getErrorCode(), cause.getMessage());
+                    } else {
+                        RuntimeException cause = (RuntimeException) e.getCause();
+                        AppSystem.log(RequestHandler.class, 
+                                "Error executing service: " + cause.getMessage());
+                        cause.printStackTrace();
+                        sendError(uuid, RequestHandler.class.getSimpleName(), "0000", "System error");
+                    }
+                }
+            }
+        }).start();
+    }
+    
+    public static void resend(String oldUUID, String newUUID) {
+        HashMap<String, Object> responseInfo = cache.get(oldUUID);
+        if(responseInfo != null) {
+            String type = (String) responseInfo.get("type");
+            boolean isComplete = (boolean) responseInfo.get("isComplete");
+            Object response = (Object) responseInfo.get("response");
+            send(newUUID, type, response, isComplete);
         } else {
-            uuid = serviceRoute.get("uuid"); //Otherwise use the provided one
-        }
-        //Store the session for later delivery
-        deliveryMap.put(uuid, session);
-        
-        //Return a receipt to the client
-        sendReceipt(uuid);
-        
-        //Invoke the service requested
-        HashMap<String, String> serviceInfo = serviceMap.get(serviceRoute.get("domain")).get(serviceRoute.get("service"));
-        AppSystem.log(this.getClass(), "Receiving request for: " + serviceInfo);
-        AppSystem.log(this.getClass(), "With the following params: " + params);
-        
-        String serviceClassName = serviceMap.get(serviceRoute.get("domain")).get(serviceRoute.get("service")).get("serviceClass");
-        Class<?> serviceClass = null;
-        RequestData service = null;
-        try {
-            //Dynamically instantiate the class
-            serviceClass = Class.forName(serviceClassName);
-            Constructor<?> serviceClassConstructor = serviceClass.getConstructor();
-            service = (RequestData) serviceClassConstructor.newInstance();
-        } catch (ClassNotFoundException classEx) {
-            AppSystem.log(RequestHandler.class, "Domain name mismatch");
-            classEx.printStackTrace();
-            sendError(uuid, this.getClass().getSimpleName(), "0001", "Requested service not found");
-            return;
-        } catch (NoSuchMethodException methodEx) {
-            AppSystem.log(RequestHandler.class, "Service name mismatch");
-            methodEx.printStackTrace();
-            sendError(uuid, this.getClass().getSimpleName(), "0001", "Requested service not found");
-            return;
-        } catch (SecurityException securityEx) {
-            AppSystem.log(RequestHandler.class, "Security voilation");
-            securityEx.printStackTrace();
-            sendError(uuid, this.getClass().getSimpleName(), "0003", "Security voilation");
-            return;
-        } catch (InstantiationException instantiateEx) {
-            AppSystem.log(RequestHandler.class, "Unable to instantiate " + serviceClassName);
-            instantiateEx.printStackTrace();
-            sendError(uuid, this.getClass().getSimpleName(), "0002", "Instantiation failure");
-            return;
-        } catch (IllegalAccessException accessEx) {
-            AppSystem.log(RequestHandler.class, "Security voilation");
-            accessEx.printStackTrace();
-            sendError(uuid, this.getClass().getSimpleName(), "0003", "Security voilation");
-        } catch (IllegalArgumentException arguementEx) {
-            AppSystem.log(RequestHandler.class, "Incorrect constructor auguement for " + serviceClassName);
-            arguementEx.printStackTrace();
-            sendError(uuid, this.getClass().getSimpleName(), "0002", "Instantiation failure");
-        } catch (InvocationTargetException e) {
-            LumitronException cause = (LumitronException) e.getCause();
-            AppSystem.log(RequestHandler.class, 
-                    "Error creating service [" + cause.getOriginClass() + "]: " + cause.getErrorCode() + " " + cause.getMessage());
-            cause.printStackTrace();
-            sendError(uuid, cause.getOriginClass(), cause.getErrorCode(), cause.getMessage());
-        }
-        
-        //Inject the request data into the service object
-        service.setRequestData(request);
-        
-        //Dynamically invoke the method
-        try {
-            Method method = service.getClass().getMethod(serviceInfo.get("method"));
-            method.invoke(service);
-        } catch (NoSuchMethodException e) {
-            AppSystem.log(RequestHandler.class, "Error in service mapping, method not found");
-            sendError(uuid, this.getClass().getSimpleName(), "0004", "Service configuration error");
-        } catch (SecurityException e) {
-            AppSystem.log(RequestHandler.class, "Security voilation");
-            sendError(uuid, this.getClass().getSimpleName(), "0003", "Security voilation");
-        } catch (IllegalAccessException e) {
-            AppSystem.log(RequestHandler.class, "Error accessing method in service");
-            sendError(uuid, this.getClass().getSimpleName(), "0004", "Service configuration error");
-        } catch (IllegalArgumentException e) {
-            AppSystem.log(RequestHandler.class, "Invalid parameters");
-            sendError(uuid, this.getClass().getSimpleName(), "0004", "Service configuration error");
-        } catch (InvocationTargetException e) {
-            LumitronException cause = (LumitronException) e.getCause();
-            AppSystem.log(RequestHandler.class, 
-                    "Error executing service [" + cause.getOriginClass() + "]: " + cause.getErrorCode() + " " + cause.getMessage());
-            cause.printStackTrace();
-            sendError(uuid, cause.getOriginClass(), cause.getErrorCode(), cause.getMessage());
+            sendError(newUUID, RequestHandler.class.getSimpleName(), "0005", "Requested UUID not in cache");
         }
     }
     
@@ -245,12 +259,13 @@ public class RequestHandler {
     /**
      * Sends an error to the client
      * @param uuid The request UUID
-     * @param orignClass The class that is sending this error
+     * @param originator The class that is sending this error
      * @param errorCode The error code (unique to each class)
      * @param errorMessage A UI presentable error message
      */
-    public static void sendError(String uuid, String orignClass, String errorCode, String errorMessage) {
+    public static void sendError(String uuid, String originator, String errorCode, String errorMessage) {
         HashMap<String, String> error = new HashMap<>();
+        error.put("originator", originator);
         error.put("errorCode", errorCode);
         error.put("errorMessage", errorMessage);
         send(uuid, "error", error, true);
@@ -271,20 +286,29 @@ public class RequestHandler {
             //Get the session based on the UUID
             Session client = deliveryMap.get(uuid);
             //Set the message on fire
-            client.getBasicRemote().sendText(jsonMsg);
-            //Remove the request from the map
-            if(isComplete) {
-                deliveryMap.remove(uuid);
+            if(client.isOpen()) {
+                client.getBasicRemote().sendText(jsonMsg);
+                //Remove the request from the map
+                if(isComplete) {
+                    deliveryMap.remove(uuid);
+                }
+            } else {
+                //Save the response to cache if the client connection is dead
+                saveToCache(uuid, type, response, isComplete);
             }
         }
         catch (IOException e) {
-            AppSystem.log(RequestHandler.class, "Error sending response for request <" + uuid + ">. Saving to cache");
-            HashMap<String, Object> responseInfo = new HashMap<>();
-            responseInfo.put("type", type);
-            responseInfo.put("response", response);
-            responseInfo.put("isComplete", isComplete);
-            cache.put(uuid, responseInfo);
+            saveToCache(uuid, type, response, isComplete);
         }
+    }
+    
+    private static void saveToCache(String uuid, String type, Object response, boolean isComplete) {
+        AppSystem.log(RequestHandler.class, "Error sending response for request <" + uuid + ">. Saving to cache");
+        HashMap<String, Object> responseInfo = new HashMap<>();
+        responseInfo.put("type", type);
+        responseInfo.put("response", response);
+        responseInfo.put("isComplete", isComplete);
+        cache.put(uuid, responseInfo);
     }
     
     private static HashMap<String, HashMap<String, HashMap<String, String>>> parseServiceMapping(String requestString) {

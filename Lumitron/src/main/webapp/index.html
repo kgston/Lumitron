@@ -6,13 +6,14 @@
 	<title>Lumitron</title>
 	
 	<script src="js/jquery-2.1.4.js"></script>
-    <script src="js/RequestController.js"></script>
+    <script src="js/Lumitron.js"></script>
+    <script src="js/Request.js"></script>
 </head>
 
 <body>
     <div id="state">Hello World</div>
-    <button onclick="webSocket.start()">Open connection to server</button>
-    <button onclick="webSocket.stop()">Close connection to server</button>
+    <button onclick="lumitron.request.open()">Open connection to server</button>
+    <button onclick="lumitron.request.close()">Close connection to server</button>
     <div id="pushedItems"></div>
 </body>
 

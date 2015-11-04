@@ -3,7 +3,7 @@
     //Domain Name
     led: {
         //Service Name
-    	getAvaliableControllers: {
+    	getAvailableControllers: {
             serviceClass: "com.lumitron.led.LedService", //Fully qualified class name
             method: "getAvaliableControllers" //method name, case sensitive
         },
@@ -22,16 +22,23 @@
     },
     music: {
         //Service Name
-        getAvaliableControllers: {
+        getAvailableControllers: {
         	serviceClass: "", //Fully qualified class name
             method: "" //method name, case sensitive
         }
     },
     project: {
         //Service Name
-        getAvaliableControllers: {
+        getAvailableControllers: {
         	serviceClass: "", //Fully qualified class name
             method: "" //method name, case sensitive
         }
+    },
+    request: {
+    	//Service Name
+    	resend: {
+    		serviceClass: "com.lumitron.network.RequestService",
+    		method: "resendResponse"
+    	}
     }
 }

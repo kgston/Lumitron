@@ -4,21 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
 
-import com.lumitron.network.RequestData;
+import com.lumitron.network.LumitronService;
 import com.lumitron.network.RequestHandler;
 
-public class LedService implements RequestData {
+public class LedService implements LumitronService {
     
     private HashMap<String, HashMap<String, String>> requestData;
     
     public void getAvaliableControllers() {
-        TreeSet<String> avaliableControllers = LedMaster.getAvaliableControllers();
-        RequestHandler.send((String) requestData.get("serviceRoute").get("uuid"), avaliableControllers);
+        TreeSet<String> avaliableControllers = LedMaster.getAvailableControllers();
+        RequestHandler.send(getServiceRoute().get("uuid"), avaliableControllers);
     }
     
     public void getRegisteredControllers() {
         TreeSet<String> registeredControllers = LedMaster.getRegisteredControllers();
-        RequestHandler.send((String) requestData.get("serviceRoute").get("uuid"), registeredControllers);
+        RequestHandler.send(getServiceRoute().get("uuid"), registeredControllers);
     }
     
     public void addController() {
@@ -26,7 +26,7 @@ public class LedService implements RequestData {
             LedMaster.addController((String) getParams().get("deviceName"));
         } catch (LedException e) {
             RequestHandler.sendError(
-                            (String) requestData.get("serviceRoute").get("uuid"), 
+                            getServiceRoute().get("uuid"), 
                             this.getClass().getSimpleName(),
                             e.getErrorCode(),
                             e.getMessage());
@@ -56,7 +56,7 @@ public class LedService implements RequestData {
                             );
         } catch (LedException e) {
             RequestHandler.sendError(
-                            (String) requestData.get("serviceRoute").get("uuid"), 
+                            getServiceRoute().get("uuid"), 
                             this.getClass().getSimpleName(),
                             e.getErrorCode(),
                             e.getMessage());
@@ -69,7 +69,10 @@ public class LedService implements RequestData {
     }
     
     private HashMap<String, String> getParams() {
-        return (HashMap<String, String>) requestData.get("params");
+        return requestData.get("params");
     }
-
+    
+    private HashMap<String, String> getServiceRoute() {
+        return requestData.get("serviceRoute");
+    }
 }

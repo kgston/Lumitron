@@ -1,6 +1,6 @@
 package com.lumitron.util;
 
-public class LumitronException extends Exception {
+public class LumitronException extends RuntimeException {
     
     private static final long serialVersionUID = -1816339581698138905L;
     
