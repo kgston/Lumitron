@@ -8,7 +8,7 @@ View all tasks here --> <https://www.pivotaltracker.com/n/projects/1462924>
 1. [Eclipse](https://eclipse.org/downloads/) (for development only)
 2. [Gradle IDE Pack](http://marketplace.eclipse.org/content/gradle-ide-pack) (for development only)
     *If you already installed the previous Buildship one, I recommend this instead. It is faster to run from eclipse and has less bugs*
-3. [Gradle](http://gradle.org/download) (for development only)
+3. [Gradle](http://gradle.org/download) (for development only) *Not necessary if you run gradle directly from CLI*
 4. [Java JDK 1.7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
 
 *Final build is expected to compile into an all-in-one JAR with an embedded webserver* 
@@ -36,10 +36,7 @@ While no one really like to follow rules, let try to keep a few important ones t
 8. Go to Gradle EnIDE > Set your Gradle home and JAVA_HOME
 9. If its not already there, open the Gradle Tasks view at Window > Show View > Others. Select Gradle > Gradle Tasks
 10. You should be able to see all project tasks in the view. Double click tomcatRun to start the webserver
-  * If you are hardcore and like CLI interface, go to the project root and run 
-  ```Batchfile
-  gradle tomcatRun
-  ```
+  * If you are hardcore and like CLI interface, go to the project root and run ` gradlew tomcatRun`
   *Assuming that you have set gradle/bin in your path*
   * A few other useful commands
   * `tomcatStop` - Stop the tomcat server (run from another terminal instance)
