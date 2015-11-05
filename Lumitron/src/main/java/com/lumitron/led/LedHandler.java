@@ -8,7 +8,7 @@ import java.util.TreeSet;
 
 import com.lumitron.util.AppSystem;
 
-public class LedMaster {
+public class LedHandler {
     
     private static final HashMap<String, Class<?>[]> commandParameterTypes = new HashMap<>();
     private static final HashMap<String, String> deviceControllerClassMap = new HashMap<>();
@@ -54,7 +54,7 @@ public class LedMaster {
     
     public static void addController(String deviceName) throws LedException {
         if(deviceName == null || deviceName.length() == 0) {
-            throw new LedException(LedMaster.class.getSimpleName(), "0007", "Device name not specified");
+            throw new LedException(LedHandler.class.getSimpleName(), "0007", "Device name not specified");
         }
         Class<?> deviceControllerClass = null;
         LedController ledController = null;
@@ -63,24 +63,24 @@ public class LedMaster {
             Constructor<?> deviceControllerConstructor = deviceControllerClass.getConstructor(String.class, String.class);
             ledController = (LedController) deviceControllerConstructor.newInstance(deviceName, avaliableControllers.get(deviceName).get("ipAddress"));
         } catch (Exception e) {
-            AppSystem.log(LedMaster.class, "Unable to connect to " + deviceName + "@" + avaliableControllers.get(deviceName).get("ipAddress") + ": " + e.getMessage());
+            AppSystem.log(LedHandler.class, "Unable to connect to " + deviceName + "@" + avaliableControllers.get(deviceName).get("ipAddress") + ": " + e.getMessage());
             e.printStackTrace();
-            throw new LedException(LedMaster.class.getSimpleName(), "0001", "Connection failed");
+            throw new LedException(LedHandler.class.getSimpleName(), "0001", "Connection failed");
         }
         if(ledController != null) {
             registeredControllers.put(deviceName, ledController);
         } else {
-            AppSystem.log(LedMaster.class, deviceName + " was not added to the device map");
+            AppSystem.log(LedHandler.class, deviceName + " was not added to the device map");
         }
     }
     
     public static void sendCommand(String deviceName, String commandName, String... commandParameters) throws LedException {
         //Error checking
         if(deviceName == null || deviceName.length() == 0) {
-            throw new LedException(LedMaster.class.getSimpleName(), "0007", "Device name not specified");
+            throw new LedException(LedHandler.class.getSimpleName(), "0007", "Device name not specified");
         }
         if(commandName == null || commandName.length() == 0) {
-            throw new LedException(LedMaster.class.getSimpleName(), "0008", "Command name not specified");
+            throw new LedException(LedHandler.class.getSimpleName(), "0008", "Command name not specified");
         }
         
         //Get the controller from the list of registered devices
@@ -89,17 +89,17 @@ public class LedMaster {
         //OMFG, you mean it was not registered?
         if(ledController == null) {
             //Quickly! See if its floating around somewhere!
-            AppSystem.log(LedMaster.class, deviceName + " was not registered, attempting to add from avaliable list");
+            AppSystem.log(LedHandler.class, deviceName + " was not registered, attempting to add from avaliable list");
             TreeSet<String> avaliableControllers =  getAvailableControllers();
             //Phew! Found it~! Let's register it and get on with it
             if(avaliableControllers.contains(deviceName)) {
-                AppSystem.log(LedMaster.class, deviceName + " was automatically registered");
+                AppSystem.log(LedHandler.class, deviceName + " was automatically registered");
                 addController(deviceName);
                 ledController = registeredControllers.get(deviceName);
             } else {
                 //Crap! It's no where to be found
-                AppSystem.log(LedMaster.class, deviceName + " was not found on the avaliable list");
-                throw new LedException(LedMaster.class.getSimpleName(), "0009", "Controller not found/registered");
+                AppSystem.log(LedHandler.class, deviceName + " was not found on the avaliable list");
+                throw new LedException(LedHandler.class.getSimpleName(), "0009", "Controller not found/registered");
             }
         }
         
@@ -108,17 +108,17 @@ public class LedMaster {
             Method method = ledController.getClass().getMethod(commandName, commandParameterTypes.get(commandName));
             method.invoke(ledController, (Object[]) commandParameters);
         } catch (NoSuchMethodException e) {
-            throw new LedException(LedMaster.class.getSimpleName(), "0002", "Command not found");
+            throw new LedException(LedHandler.class.getSimpleName(), "0002", "Command not found");
         } catch (SecurityException e) {
-            throw new LedException(LedMaster.class.getSimpleName(), "0003", "Security violation");
+            throw new LedException(LedHandler.class.getSimpleName(), "0003", "Security violation");
         } catch (IllegalAccessException e) {
-            throw new LedException(LedMaster.class.getSimpleName(), "0004", "Unable to access the command");
+            throw new LedException(LedHandler.class.getSimpleName(), "0004", "Unable to access the command");
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
-            throw new LedException(LedMaster.class.getSimpleName(), "0005", "Invalid command parameters");
+            throw new LedException(LedHandler.class.getSimpleName(), "0005", "Invalid command parameters");
         } catch (InvocationTargetException e) {
             e.printStackTrace();
-            throw new LedException(LedMaster.class.getSimpleName(), "0006", "Error running command");
+            throw new LedException(LedHandler.class.getSimpleName(), "0006", "Error running command");
         }
     }
     

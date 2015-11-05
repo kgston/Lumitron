@@ -1,6 +1,6 @@
 package com.lumitron.music;
 
 
-public class MusicController {
+public class MusicHandler {
 
 }

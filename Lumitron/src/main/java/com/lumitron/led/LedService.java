@@ -8,25 +8,25 @@ import com.lumitron.network.LumitronService;
 import com.lumitron.network.RequestHandler;
 
 public class LedService implements LumitronService {
-    
-    private HashMap<String, HashMap<String, String>> requestData;
+    private HashMap<String, String> serviceRoute;
+    private HashMap<String, String> params;
     
     public void getAvaliableControllers() {
-        TreeSet<String> avaliableControllers = LedMaster.getAvailableControllers();
-        RequestHandler.send(getServiceRoute().get("uuid"), avaliableControllers);
+        TreeSet<String> avaliableControllers = LedHandler.getAvailableControllers();
+        RequestHandler.send(serviceRoute.get("uuid"), avaliableControllers);
     }
     
     public void getRegisteredControllers() {
-        TreeSet<String> registeredControllers = LedMaster.getRegisteredControllers();
-        RequestHandler.send(getServiceRoute().get("uuid"), registeredControllers);
+        TreeSet<String> registeredControllers = LedHandler.getRegisteredControllers();
+        RequestHandler.send(serviceRoute.get("uuid"), registeredControllers);
     }
     
     public void addController() {
         try {
-            LedMaster.addController((String) getParams().get("deviceName"));
+            LedHandler.addController(params.get("deviceName"));
         } catch (LedException e) {
             RequestHandler.sendError(
-                            getServiceRoute().get("uuid"), 
+                            serviceRoute.get("uuid"), 
                             this.getClass().getSimpleName(),
                             e.getErrorCode(),
                             e.getMessage());
@@ -35,7 +35,6 @@ public class LedService implements LumitronService {
     
     public void sendCommand() {
         try {
-            HashMap<String, String> params = getParams();
             ArrayList<String> commandParameters = new ArrayList<>();
             switch(params.get("command")) {
                 case "transitionToColour": 
@@ -49,14 +48,14 @@ public class LedService implements LumitronService {
                     break;   
             }
             String[] commandParametersAry = new String[commandParameters.size()];
-            LedMaster.sendCommand(
+            LedHandler.sendCommand(
                             params.get("device"),
                             params.get("command"),
                             commandParameters.toArray(commandParametersAry)
                             );
         } catch (LedException e) {
             RequestHandler.sendError(
-                            getServiceRoute().get("uuid"), 
+                            serviceRoute.get("uuid"), 
                             this.getClass().getSimpleName(),
                             e.getErrorCode(),
                             e.getMessage());
@@ -65,14 +64,7 @@ public class LedService implements LumitronService {
     
     @Override
     public void setRequestData(HashMap<String, HashMap<String, String>> requestData) {
-        this.requestData = requestData;
-    }
-    
-    private HashMap<String, String> getParams() {
-        return requestData.get("params");
-    }
-    
-    private HashMap<String, String> getServiceRoute() {
-        return requestData.get("serviceRoute");
+        this.serviceRoute = requestData.get("serviceRoute");
+        this.params = requestData.get("params");
     }
 }

@@ -22,7 +22,9 @@ import com.lumitron.util.AppSystem;
 import com.lumitron.util.LumitronException;
 
 /**
- * @author b-kingston.a.chan
+ * The request handler manages the WebSocket connection and intercepts all incoming requests
+ * and routes the request to the right class and method
+ * @author Kingston Chan
  *
  */
 @ServerEndpoint("/ws/request")
