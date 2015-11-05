@@ -97,8 +97,7 @@ public abstract class GenericLedController implements LedController {
     private String toColourHex(int colourValue) {
         if(colourValue < 0) {
             colourValue = 0;
-        }
-        if(colourValue > 255) {
+        } else if(colourValue > 255) {
             colourValue = 255;
         }
         String colourHex = Integer.toHexString(colourValue);
