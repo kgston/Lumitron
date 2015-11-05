@@ -5,11 +5,18 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Inet4Address;
 import java.net.SocketException;
+import java.util.Arrays;
 
 import javax.xml.bind.DatatypeConverter;
 
 import com.lumitron.util.AppSystem;
 
+/**
+ * Implements an abstract LED controller that implements all generic functions across LED controllers
+ * Uses UDP as a connection protocol
+ * @author Kingston Chan
+ *
+ */
 public abstract class GenericLedController implements LedController {
     
     protected String deviceName;
@@ -20,6 +27,14 @@ public abstract class GenericLedController implements LedController {
     
     protected String currentHexColour = "";
     
+    
+    /**
+     * Abstracted implementation of a LED controller for use with subclasses
+     * @param deviceName Name of the LED controller
+     * @param ipAddress IP address of the device in IPv4 syntax
+     * @param port The listening port of the LED controller
+     * @throws LedException Throws an exception if there is an error when connecting to the LED controller
+     */
     public GenericLedController(String deviceName, String ipAddress, int port) throws LedException {
         this.deviceName = deviceName;
         this.ipAddress = ipAddress;
@@ -33,6 +48,9 @@ public abstract class GenericLedController implements LedController {
         }
     }
     
+    /* (non-Javadoc)
+     * @see com.lumitron.led.LedController#connect()
+     */
     @Override
     public void connect() throws LedException {
         AppSystem.log(this.getClass(), "Connecting to " + deviceName);
@@ -49,6 +67,9 @@ public abstract class GenericLedController implements LedController {
         }
     }
     
+    /* (non-Javadoc)
+     * @see com.lumitron.led.LedController#disconnect()
+     */
     @Override
     public void disconnect() throws LedException {
         off();
@@ -59,6 +80,9 @@ public abstract class GenericLedController implements LedController {
         }
     }
     
+    /* (non-Javadoc)
+     * @see com.lumitron.led.LedController#setColour(int, int, int)
+     */
     @Override
     public void setColour(int red, int green, int blue) throws LedException {
         String redHex = toColourHex(red);
@@ -68,6 +92,9 @@ public abstract class GenericLedController implements LedController {
         setColour(redHex + greenHex + blueHex);
     }
 
+    /* (non-Javadoc)
+     * @see com.lumitron.led.LedController#transitionToColour(java.lang.String, java.lang.String, java.lang.String)
+     */
     public void transitionToColour(String pauseInterval, String incrementInterval, String hexColourString) throws LedException {
         String[] fromHexColour = splitByLength(currentHexColour, 2);
         String[] toHexColour = splitByLength(hexColourString, 2);
@@ -94,6 +121,11 @@ public abstract class GenericLedController implements LedController {
         }
     }
     
+    /**
+     * Converts from a 0-255 colour value to a 2 character hex string
+     * @param colourValue Integer in the range of 0-255
+     * @return Returns a hex representation of the colour in 2 characters
+     */
     private String toColourHex(int colourValue) {
         if(colourValue < 0) {
             colourValue = 0;
@@ -107,7 +139,17 @@ public abstract class GenericLedController implements LedController {
         return colourHex;
     }
     
+    /**
+     * Increments the from digit towards the to digit by the increment specified. Will not increment/decrease when it is the same
+     * @param from The starting point to increment
+     * @param to The end point of increment
+     * @param increment The amount to increment/decrease by, depending on the direction of the to digit. Defaults to 1 if less than 1
+     * @return
+     */
     private int incrementColour(int from, int to, int increment) {
+        if(increment < 1) {
+            increment = 1;
+        }
         int diff = 0;
         if(from < to) {
             diff = to - from;
@@ -127,10 +169,24 @@ public abstract class GenericLedController implements LedController {
         return from;
     }
     
+    /**
+     * Util method to split any String by length
+     * @param string String to split
+     * @param lengthToSplitBy The length to split by
+     * @return An array of Strings split by the specified length
+     */
     private String[] splitByLength(String string, int lengthToSplitBy) {
         return string.split("(?<=\\G.{" + lengthToSplitBy + "})");
     }
     
+    /**
+     * Sends the command to the controller. Implemented in UDP
+     * @param hexCommand The command to send to the controller, in hex encoding
+     * @param hasResponse Whether the controller will return a response. 
+     * If the code expects a response but no response is given, it will continue to block the thread
+     * @return Returns the response from the controller. Returns null if hasResponse is false
+     * @throws LedException
+     */
     protected String send(String hexCommand, boolean hasResponse) throws LedException {
         try {
             //Convert the command to bytes
@@ -140,14 +196,20 @@ public abstract class GenericLedController implements LedController {
             //Fire away
             connection.send(sendPacket);
             
-            //This controller never returns a response
-            // byte[] response = new byte[1024];
-            // DatagramPacket receivePacket = new DatagramPacket(response, response.length);
-            // client.receive(receivePacket);
-            // response = receivePacket.getData();
-            
-            // String responseString = DatatypeConverter.printHexBinary(response);
-            // System.out.println("Server says " + responseString);
+            //Depending on whether the controller returns a response
+            if(hasResponse) {
+                byte[] buffer = new byte[1024];
+                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+                connection.receive(packet);
+                buffer = packet.getData();
+                
+                byte[] data = Arrays.copyOf(buffer, packet.getLength()-1);
+                
+                
+                String responseString = DatatypeConverter.printHexBinary(data);
+                AppSystem.log(this.getClass(), deviceName + " responded with " + responseString);
+                return responseString;
+            }
         }catch (IOException e) {
             AppSystem.log(this.getClass(), "Error sending data " + hexCommand + " to " + deviceName);
             AppSystem.log(this.getClass(), "Failed with error: " + e.getMessage());
