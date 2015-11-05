@@ -61,36 +61,10 @@ public abstract class GenericLedController implements LedController {
     
     @Override
     public void setColour(int red, int green, int blue) throws LedException {
-        if(red < 0) {
-            red = 0;
-        }
-        if(red > 255) {
-            red = 255;
-        }
-        if(green < 0) {
-            green = 0;
-        }
-        if(green > 255) {
-            green = 255;
-        }
-        if(blue < 0) {
-            blue = 0;
-        }
-        if(blue > 255) {
-            blue = 255;
-        }
-        String redHex = Integer.toHexString(red);
-        String greenHex = Integer.toHexString(green);
-        String blueHex = Integer.toHexString(blue);
-        if(redHex.length() == 1) {
-            redHex = "0" + redHex;
-        }
-        if(greenHex.length() == 1) {
-            greenHex = "0" + greenHex;
-        }
-        if(blueHex.length() == 1) {
-            blueHex = "0" + blueHex;
-        }
+        String redHex = toColourHex(red);
+        String greenHex = toColourHex(green);
+        String blueHex = toColourHex(blue);
+        
         setColour(redHex + greenHex + blueHex);
     }
 
@@ -105,72 +79,53 @@ public abstract class GenericLedController implements LedController {
         int toBlue = Integer.parseInt(toHexColour[2], 16);
         
         int increment = Integer.parseInt(incrementInterval);
-        int diff = 0;
         
-        boolean transitioning = true;
-        while(transitioning) {
-            transitioning = false;
-            if(fromRed < toRed) {
-                diff = toRed - fromRed;
-                if(diff < increment) {
-                    fromRed+= diff;
-                } else {
-                    fromRed+= increment;
-                }
-                transitioning = true;
-            }
-            if(fromGreen < toGreen) {
-                diff = toGreen - fromGreen;
-                if(diff < increment) {
-                    fromGreen+= diff;
-                } else {
-                    fromGreen+= increment;
-                }
-                transitioning = true;
-            }
-            if(fromBlue < toBlue) {
-                diff = toBlue - fromBlue;
-                if(diff < increment) {
-                    fromBlue+= diff;
-                } else {
-                    fromBlue+= increment;
-                }
-                transitioning = true;
-            }
-            if(fromRed > toRed) {
-                diff = fromRed - toRed;
-                if(diff < increment) {
-                    fromRed-= diff;
-                } else {
-                    fromRed-= increment;
-                }
-                transitioning = true;
-            }
-            if(fromGreen > toGreen) {
-                diff = fromGreen - toGreen;
-                if(diff < increment) {
-                    fromGreen-= diff;
-                } else {
-                    fromGreen-= increment;
-                }
-                transitioning = true;
-            }
-            if(fromBlue > toBlue) {
-                diff = fromBlue - toBlue;
-                if(diff < increment) {
-                    fromBlue-= diff;
-                } else {
-                    fromBlue-= increment;
-                }
-                transitioning = true;
-            }
+        while(fromRed != toRed && fromGreen != toGreen && fromBlue != toBlue) {
+            fromRed = incrementColour(fromRed, toRed, increment);
+            fromGreen = incrementColour(fromGreen, toGreen, increment);
+            fromBlue = incrementColour(fromBlue, toBlue, increment);
             setColour(fromRed, fromGreen, fromBlue);
+            
             try {
                 Thread.sleep(Integer.parseInt(pauseInterval));
             } catch (InterruptedException e) {
-                AppSystem.log(this.getClass(), "Got interrupted during transitioning");
+                AppSystem.log(this.getClass(), "Got interrupted while sleeping during transition");
             }
         }
+    }
+    
+    private String toColourHex(int colourValue) {
+        if(colourValue < 0) {
+            colourValue = 0;
+        }
+        if(colourValue > 255) {
+            colourValue = 255;
+        }
+        String colourHex = Integer.toHexString(colourValue);
+        if(colourHex.length() == 1) {
+            colourHex = "0" + colourHex;
+        }
+        return colourHex;
+    }
+    
+    private int incrementColour(int from, int to, int increment) {
+        int diff = 0;
+        if(from < to) {
+            diff = to - from;
+            if(diff < increment) {
+                from+= diff;
+            } else {
+                from+= increment;
+            }
+        } else if(from > to) {
+            diff = from - to;
+            if(diff < increment) {
+                from-= diff;
+            } else {
+                from-= increment;
+            }
+        }
+        return from;
     }
     
     private String[] splitByLength(String string, int lengthToSplitBy) {
