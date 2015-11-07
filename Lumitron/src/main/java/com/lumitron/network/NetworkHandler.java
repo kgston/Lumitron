@@ -13,7 +13,7 @@ public class NetworkHandler {
 
         // Return the formatted response
         HashMap<String, String> response = new HashMap<String, String>();
-        response.put("ip", ipAddress);
+        response.put("ip_address", ipAddress);
         response.put("is_reachable", isIpReachable ? "true" : "false");
 
         return response;

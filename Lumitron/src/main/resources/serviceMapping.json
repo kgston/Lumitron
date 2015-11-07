@@ -1,51 +1,51 @@
 //Service Mapping file
 {
     //Domain Name
-    led: {
+    "led": {
         //Service Name
-    	getAvailableControllers: {
-            serviceClass: "com.lumitron.led.LedService", //Fully qualified class name
-            method: "getAvaliableControllers" //method name, case sensitive
+        "getAvailableControllers": {
+            "serviceClass": "com.lumitron.led.LedService", //Fully qualified class name
+            "method": "getAvaliableControllers" //method name, case sensitive
         },
-        getRegisteredControllers: {
-        	serviceClass: "com.lumitron.led.LedService", //Fully qualified class name
-        	method: "getRegisteredControllers" //method name, case sensitive
+        "getRegisteredControllers": {
+            "serviceClass": "com.lumitron.led.LedService", //Fully qualified class name
+            "method": "getRegisteredControllers" //method name, case sensitive
         },
-        addController: {
-            serviceClass: "com.lumitron.led.LedService", //Fully qualified class name
-            method: "addController" //method name, case sensitive
+        "addController": {
+            "serviceClass": "com.lumitron.led.LedService", //Fully qualified class name
+            "method": "addController" //method name, case sensitive
         },
-        sendCommand: {
-            serviceClass: "com.lumitron.led.LedService", //Fully qualified class name
-            method: "sendCommand" //method name, case sensitive
+        "sendCommand": {
+            "serviceClass": "com.lumitron.led.LedService", //Fully qualified class name
+            "method": "sendCommand" //method name, case sensitive
         }
     },
-    music: {
+    "music": {
         //Service Name
-        getAvailableControllers: {
-        	serviceClass: "", //Fully qualified class name
-            method: "" //method name, case sensitive
+        "getAvailableControllers": {
+            "serviceClass": "", //Fully qualified class name
+            "method": "" //method name, case sensitive
         }
     },
-    network: {
+    "network": {
         //Service Name
-        isIpReachable: {
-            serviceClass: "com.lumitron.network.NetworkService",
-            method: "isIpReachable"
+        "isIpReachable": {
+            "serviceClass": "com.lumitron.network.NetworkService",
+            "method": "isIpReachable"
         }
     },
-    project: {
+    "project": {
         //Service Name
-        getAvailableControllers: {
-        	serviceClass: "", //Fully qualified class name
-            method: "" //method name, case sensitive
+        "getAvailableControllers": {
+            "serviceClass": "", //Fully qualified class name
+            "method": "" //method name, case sensitive
         }
     },
-    request: {
-    	//Service Name
-    	resend: {
-    		serviceClass: "com.lumitron.network.RequestService",
-    		method: "resendResponse"
-    	}
+    "request": {
+        //Service Name
+        "resend": {
+            "serviceClass": "com.lumitron.network.RequestService",
+            "method": "resendResponse"
+        }
     }
 }
