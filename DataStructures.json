@@ -62,3 +62,9 @@ var params = {
         command: "off"
 }
 lumitron.request.send("led", "sendCommand", params);
+
+var params = {
+        ip_address: "192.168.1.3",
+        timeout: "3000"
+}
+lumitron.request.send("network", "isIpReachable", params);

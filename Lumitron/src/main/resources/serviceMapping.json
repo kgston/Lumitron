@@ -27,6 +27,13 @@
             method: "" //method name, case sensitive
         }
     },
+    network: {
+        //Service Name
+        isIpReachable: {
+            serviceClass: "com.lumitron.network.NetworkService",
+            method: "isIpReachable"
+        }
+    },
     project: {
         //Service Name
         getAvailableControllers: {
