@@ -1,27 +1,27 @@
 //Request Structure
 {
-    serviceRoute: {
-        domain: "Domain name defined in mapping",
-        service: "Service name defined in mapping"
-        uuid: "Auto injected from client during request handling"
+    "serviceRoute": {
+        "domain": "Domain name defined in mapping",
+        "service": "Service name defined in mapping",
+        "uuid": "Auto injected from client during request handling"
     },
-    params: {
-        key: "Data to pass in"
+    "params": {
+        "key": "Data to pass in"
     }
 }
 
 //Response Structure
 {
-    uuid: "Request UUID",
-    type: "receipt" || "response" || "error",
-    success: true || false,
+    "uuid": "Request UUID",
+    "type": "receipt" || "response" || "error",
+    "success": true || false,
     //If response
-    response: Object,
+    "response": Object,
     //If success === false
-    error: {
-        origin: "Origin class throwing this error"
-        code: "Error code", //For application use
-        msg: "Error message" //UI friendly
+    "error": {
+        "origin": "Origin class throwing this error",
+        "code": "Error code", //For application use
+        "msg": "Error message", //UI friendly
     }
 }
 
@@ -30,41 +30,41 @@
 
 lumitron.request.send("led", "getAvailableControllers");
 
-lumitron.request.send("led", "sendCommand", {deviceName: "Lagute-0001"});
+lumitron.request.send("led", "sendCommand", {"deviceName": "Lagute-0001"});
 
-lumitron.request.send("led", "sendCommand", {deviceName: "Lagute-0001", command: "on"});
+lumitron.request.send("led", "sendCommand", {"deviceName": "Lagute-0001", "command": "on"});
 
 var params = {
-        device: "Lagute-0001",
-        command: "setColour",
-        colour: "00FF00"
+        "device": "Lagute-0001",
+        "command": "setColour",
+        "colour": "00FF00"
 }
 lumitron.request.send("led", "sendCommand", params);
 
 var params = {
-        device: "Lagute-0001",
-        command: "setBrightness",
-        brightness: "50"
+        "device": "Lagute-0001",
+        "command": "setBrightness",
+        "brightness": "50"
 }
 lumitron.request.send("led", "sendCommand", params);
 
 var params = {
-        device: "Lagute-0001",
-        command: "transitionToColour",
-        colour: "FF00FF",
-        pauseInterval: "3",
-        incrementInterval: "1"
+        "device": "Lagute-0001",
+        "command": "transitionToColour",
+        "colour": "FF00FF",
+        "pauseInterval": "3",
+        "incrementInterval": "1"
 }
 lumitron.request.send("led", "sendCommand", params);
 
 var params = {
-        device: "Lagute-0001",
-        command: "off"
+        "device": "Lagute-0001",
+        "command": "off"
 }
 lumitron.request.send("led", "sendCommand", params);
 
 var params = {
-        ip_address: "192.168.1.3",
-        timeout: "3000"
+        "ip_address": "192.168.1.3",
+        "timeout": "3000"
 }
 lumitron.request.send("network", "isIpReachable", params);
