@@ -109,3 +109,15 @@ h3 {
     font-size: 20px;
     letter-spacing: 0.03em;
 }
+
+/* Classes */
+/* Glow colours */
+.orangeGlowFont {
+	color: #FFEA52;
+    text-shadow: 0px 0px 5px #FFEA52;
+}
+.orangeGlowLine {
+    box-shadow: 0px 0px 3px #FFEA52;
+    height: 1px;
+    background-color: #FFEA52;
+}
