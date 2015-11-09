@@ -56,5 +56,4 @@ While I sometimes like to think I'm a coding god, reality is tougher than it see
 - Vadim Burlakin
 
 ## Acknoledgements
-This code references the LED controller protocols in this project
-<https://github.com/jacklaag/rgb_wifi_python>
+[Entypo+ pictograms](http://www.entypo.com/index.php)
