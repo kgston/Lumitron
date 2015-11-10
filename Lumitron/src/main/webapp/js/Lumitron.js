@@ -32,9 +32,15 @@ lumitron = (function() {
         });
 	};
 	
+	//Run all button bindings
+	var bindButtons = function() {
+		
+	};
+	
 	//Initializes the application and run all startup scripts
 	var init = function() {
 		inlineSVG();
+		bindButtons();
 		this.request.open();
 	};
 	
