@@ -32,6 +32,10 @@
         "isIpReachable": {
             "serviceClass": "com.lumitron.network.NetworkService",
             "method": "isIpReachable"
+        },
+        "getMacAddress": {
+            "serviceClass": "com.lumitron.network.NetworkService",
+            "method": "getMacAddress"
         }
     },
     "project": {

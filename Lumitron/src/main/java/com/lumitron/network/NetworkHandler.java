@@ -18,4 +18,19 @@ public class NetworkHandler {
 
         return response;
     }
+
+    public static HashMap<String, String> getMacAddress(HashMap<String, String> params) {
+        // Get the parameters
+        String ipAddress = params.get("ip_address");
+
+        // Get the MAC address
+        String macAddress = Network.getMacAddressFromArpTable(ipAddress);
+
+        // Return the formatted response
+        HashMap<String, String> response = new HashMap<String, String>();
+        response.put("ip_address", ipAddress);
+        response.put("mac_address", (macAddress != null) ? macAddress : "");
+
+        return response;
+    }
 }
