@@ -135,8 +135,8 @@ public class RequestHandler {
                 
                 //Invoke the service requested
                 HashMap<String, String> serviceInfo = serviceMap.get(serviceRoute.get("domain")).get(serviceRoute.get("service"));
-                AppSystem.log(this.getClass(), "Receiving request for: " + serviceInfo);
-                AppSystem.log(this.getClass(), "With the following params: " + params);
+                AppSystem.log(RequestHandler.class, "Receiving request for: " + serviceInfo);
+                AppSystem.log(RequestHandler.class, "With the following params: " + params);
                 
                 String serviceClassName = serviceMap.get(serviceRoute.get("domain")).get(serviceRoute.get("service")).get("serviceClass");
                 Class<?> serviceClass = null;
@@ -149,31 +149,31 @@ public class RequestHandler {
                 } catch (ClassNotFoundException classEx) {
                     AppSystem.log(RequestHandler.class, "Domain name mismatch");
                     classEx.printStackTrace();
-                    sendError(uuid, this.getClass().getSimpleName(), "0001", "Requested service not found");
+                    sendError(uuid, RequestHandler.class.getSimpleName(), "0001", "Requested service not found");
                     return;
                 } catch (NoSuchMethodException methodEx) {
                     AppSystem.log(RequestHandler.class, "Service name mismatch");
                     methodEx.printStackTrace();
-                    sendError(uuid, this.getClass().getSimpleName(), "0001", "Requested service not found");
+                    sendError(uuid, RequestHandler.class.getSimpleName(), "0001", "Requested service not found");
                     return;
                 } catch (SecurityException securityEx) {
                     AppSystem.log(RequestHandler.class, "Security voilation");
                     securityEx.printStackTrace();
-                    sendError(uuid, this.getClass().getSimpleName(), "0003", "Security voilation");
+                    sendError(uuid, RequestHandler.class.getSimpleName(), "0003", "Security voilation");
                     return;
                 } catch (InstantiationException instantiateEx) {
                     AppSystem.log(RequestHandler.class, "Unable to instantiate " + serviceClassName);
                     instantiateEx.printStackTrace();
-                    sendError(uuid, this.getClass().getSimpleName(), "0002", "Instantiation failure");
+                    sendError(uuid, RequestHandler.class.getSimpleName(), "0002", "Instantiation failure");
                     return;
                 } catch (IllegalAccessException accessEx) {
                     AppSystem.log(RequestHandler.class, "Security voilation");
                     accessEx.printStackTrace();
-                    sendError(uuid, this.getClass().getSimpleName(), "0003", "Security voilation");
+                    sendError(uuid, RequestHandler.class.getSimpleName(), "0003", "Security voilation");
                 } catch (IllegalArgumentException arguementEx) {
                     AppSystem.log(RequestHandler.class, "Incorrect constructor auguement for " + serviceClassName);
                     arguementEx.printStackTrace();
-                    sendError(uuid, this.getClass().getSimpleName(), "0002", "Instantiation failure");
+                    sendError(uuid, RequestHandler.class.getSimpleName(), "0002", "Instantiation failure");
                 } catch (InvocationTargetException e) {
                     LumitronException cause = (LumitronException) e.getCause();
                     AppSystem.log(RequestHandler.class, 
@@ -191,16 +191,16 @@ public class RequestHandler {
                     method.invoke(service);
                 } catch (NoSuchMethodException e) {
                     AppSystem.log(RequestHandler.class, "Error in service mapping, method not found");
-                    sendError(uuid, this.getClass().getSimpleName(), "0004", "Service configuration error");
+                    sendError(uuid, RequestHandler.class.getSimpleName(), "0004", "Service configuration error");
                 } catch (SecurityException e) {
                     AppSystem.log(RequestHandler.class, "Security voilation");
-                    sendError(uuid, this.getClass().getSimpleName(), "0003", "Security voilation");
+                    sendError(uuid, RequestHandler.class.getSimpleName(), "0003", "Security voilation");
                 } catch (IllegalAccessException e) {
                     AppSystem.log(RequestHandler.class, "Error accessing method in service");
-                    sendError(uuid, this.getClass().getSimpleName(), "0004", "Service configuration error");
+                    sendError(uuid, RequestHandler.class.getSimpleName(), "0004", "Service configuration error");
                 } catch (IllegalArgumentException e) {
                     AppSystem.log(RequestHandler.class, "Invalid parameters");
-                    sendError(uuid, this.getClass().getSimpleName(), "0004", "Service configuration error");
+                    sendError(uuid, RequestHandler.class.getSimpleName(), "0004", "Service configuration error");
                 } catch (InvocationTargetException e) {
                     if(e.getCause() instanceof LumitronException) {
                         LumitronException cause = (LumitronException) e.getCause();

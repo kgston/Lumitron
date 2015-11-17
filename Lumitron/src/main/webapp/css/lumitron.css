@@ -79,12 +79,15 @@
 }
 
 /* Default layout */
+stencil {
+    display: none;
+}
 body {
 	font-family: Dosis, sans-serif;
-    font-weight: 500;
-    font-size: 16px;
+    font-weight: 400;
+    font-size: 14px;
     line-height: 1.3;
-    letter-spacing: 0.038em;
+    letter-spacing: 0.07em;
     color: #D4D4D4;
     -webkit-font-smoothing: antialiased;
     background-color: #252525;
@@ -101,15 +104,65 @@ h2 {
     font-family: 'Orbitron', sans-serif;
     font-style: normal;
     font-weight: 500;
-    font-size: 26px;
-    letter-spacing: 0.06em;
+    font-size: 24px;
+    letter-spacing: 0.2em;
+    margin: 0px 20px;
+    margin-top: 10px;
 }
 h3 {
     font-family: 'Orbitron', sans-serif;
     font-style: normal;
     font-weight: 400;
-    font-size: 20px;
+    font-size: 16px;
     letter-spacing: 0.03em;
+    margin: 0px 20px;
+    margin-left: 0px;
+    padding: 5px;
+}
+select {
+    background-color: #252525;
+    border: none;
+    font-family: Dosis, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.3;
+    letter-spacing: 0.07em;
+    color: #D4D4D4;
+    padding-left: 3px;
+    max-width: 100px;
+}
+select:hover {
+    border-left: #FFEA52 3px solid;
+    padding-left: 0px;
+}
+select:focus {
+    border-left: #FFEA52 3px solid;
+    padding-left: 0px;
+    outline: none; 
+}
+input {
+    background-color: #252525;
+    border: none;
+    font-family: Dosis, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.3;
+    letter-spacing: 0.07em;
+    color: #D4D4D4;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 7px;
+    height: 18px !important;
+    max-width: 100px;
+}
+input:hover {
+    border-left: #FFEA52 3px solid;
+    padding-left: 4px;
+}
+input:focus {
+    outline: none; 
+    border-left: #FFEA52 3px solid;
+    padding-left: 4px;
 }
 /* Buttons */
 button {
@@ -122,12 +175,14 @@ button {
     text-shadow: 0px 0px 5px #FFEA52;
     border: 0px;
 }
-/* Forms */
-
 /* Classes */
 /* Glow colours */
 .orangeGlowFont {
 	color: #FFEA52;
+    text-shadow: 0px 0px 5px #FFEA52;
+}
+.orangeBacklitFont {
+	color: #252525;
     text-shadow: 0px 0px 5px #FFEA52;
 }
 .orangeGlowLine {
@@ -135,6 +190,25 @@ button {
     height: 1px;
     width: 100%;
     background-color: #FFEA52;
+}
+.whiteGlowFont {
+	color: #FFFFFF;
+    text-shadow: 0px 0px 5px #FFFFFF;
+}
+.whiteBacklitFont {
+	color: #252525;
+    text-shadow: 0px 0px 5px #FFFFFF;
+}
+.whiteGlowLine {
+    box-shadow: 0px 0px 3px #FFFFFF;
+    height: 1px;
+    width: 100%;
+    background-color: #FFFFFF;
+}
+.blueGlowRightLine {
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(to right, #036A98, transparent);
 }
 
 /* Icons */
@@ -152,7 +226,7 @@ button {
     -webkit-filter: drop-shadow(0px 0px 1.5px #FFFFFF );
 }
 .iconMedium {
-    height: 350px;
+    height: 35px;
     fill: #FFEA52;
     filter: drop-shadow(0px 0px 1px #FFEA52 );
     -webkit-filter: drop-shadow(0px 0px 1px #FFEA52 );
@@ -163,6 +237,18 @@ button {
     filter: drop-shadow(0px 0px 1px #FFEA52 );
     -webkit-filter: drop-shadow(0px 0px 1px #FFEA52 );
 }
+.iconXSmall {
+    height: 25px;
+    fill: white;
+    filter: drop-shadow(0px 0px 1px white );
+    -webkit-filter: drop-shadow(0px 0px 1px white );
+}
+.iconXXSmall {
+    height: 20px;
+    fill: white;
+    filter: drop-shadow(0px 0px 1px white );
+    -webkit-filter: drop-shadow(0px 0px 1px white );
+}
 
 /* Mouse */
 .pointer {
@@ -172,6 +258,83 @@ button {
 /* Layout */
 .titleBar {
 	display: flex;
-	width: 100%;
 	flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+}
+.titleGroupLeft {
+    display: flex;
+}
+.titleGroupRight {
+    display: flex;
+    align-items: center;
+}
+
+#main {
+    display: flex;
+    
+}
+#controllersPanel {
+    flex-grow: 2;
+    display: flex;
+    flex-direction: column;
+}
+.controllerPanel {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+}
+.controller {
+    display: flex;
+    flex-direction: column;
+    margin: 0px 20px;
+    margin-top: 10px;
+    width: 250px;
+    border-left: #036A98 2px solid;
+}
+.deviceTitle {
+    display: flex;
+    justify-content: space-between;
+    background: linear-gradient(to right, #036A98, transparent);
+}
+.deviceStatuses {
+    display: flex;
+    align-items: center;
+}
+#eventsPanel {
+    flex-grow: 3;
+}
+
+/* Forms */
+.infoPanel {
+    flex-grow: 2;
+    display: flex;
+}
+.infoLabels {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding-top: 5px;
+    padding-right: 30px;
+}
+.infoLabels * {
+    padding-left: 10px;
+    height: 20px;
+    margin: 2px 0px;
+}
+.infoValues {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding-top: 5px;
+}
+.infoValues * {
+    height: 20px;
+    margin: 2px 0px;
+}
+.infoValues span {
+    padding-left: 7px;
+}
+.controlPanel {
+    flex-grow: 1;
 }

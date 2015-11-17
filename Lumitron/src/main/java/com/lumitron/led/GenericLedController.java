@@ -107,7 +107,7 @@ public abstract class GenericLedController implements LedController {
         
         int increment = Integer.parseInt(incrementInterval);
         
-        while(fromRed != toRed && fromGreen != toGreen && fromBlue != toBlue) {
+        while(fromRed != toRed || fromGreen != toGreen || fromBlue != toBlue) {
             fromRed = incrementColour(fromRed, toRed, increment);
             fromGreen = incrementColour(fromGreen, toGreen, increment);
             fromBlue = incrementColour(fromBlue, toBlue, increment);

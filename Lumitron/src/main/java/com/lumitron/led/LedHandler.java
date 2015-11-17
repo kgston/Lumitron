@@ -39,7 +39,7 @@ public class LedHandler {
     private static void refreshAvailableControllers() {
         //TODO Implement search for controllers on WiFi network
         HashMap<String, String> deviceInfo = new HashMap<>();
-        deviceInfo.put("ipAddress", "10.10.10.10");
+        deviceInfo.put("ipAddress", "10.10.1.1");
         deviceInfo.put("deviceModel", "Lagute");
         if(registeredControllers.containsKey("Lagute-0001")) {
             avaliableControllers.remove("Lagute-0001");
