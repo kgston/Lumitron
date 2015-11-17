@@ -58,7 +58,8 @@ lumitron = (function() {
 	//Public API
 	return {
 		init: init,
-		getUUID: getUUID
+		getUUID: getUUID,
+        inlineSVG: inlineSVG
 	}
 })();
 

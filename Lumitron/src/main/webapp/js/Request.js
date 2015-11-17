@@ -2,25 +2,51 @@ lumitron.request = (function() {
 	//Private vars
 	var serverURL = "ws://localhost:8080/Lumitron/ws/request";
 	var socket = null;
+    
+    //UI vars
+    var serverStateUI;
 	
 	//Container to map a request to a response and all related info
 	var pendingResponses = {};
+    
+    //First run code
+    $(document).ready(function() {
+        serverStateUI = stencil.define("serverStatusStencil");
+        setServerState("loading");
+    });
 	
 	//Private functions
+    var setServerState = function(state) {
+        switch(state) {
+            case "loading":
+                serverStateUI.render({icon: "dots-three-horizontal.svg"});
+                break;
+            case "connected":
+                serverStateUI.render({icon: "bar-graph.svg"});
+                $("#serverState").off().click(lumitron.request.close);
+                break;
+            case "disconnected":
+                serverStateUI.render({icon: "warning.svg"});
+                $("#serverState").off().click(lumitron.request.open);
+                break;
+        }
+        lumitron.inlineSVG();
+    };
+    
 	//Starts a new connection to the server. 
 	//Also checks if there are existing cached response and retrieves them in case of disconnection.
 	var open = function() {
 		if(socket == null) {
 			socket = new WebSocket(serverURL);
 			socket.onopen = function(event) {
-				$("#state").html("Open");
+				setServerState("connected");
 				//Checks for caches responses on server
 				Object.keys(pendingResponses).forEach(function(responseUUID) {
 					send("request", "resend", {uuid: responseUUID}, false);
 				});
 			}
 			socket.onclose = function(event) {
-				$("#state").html("Closed");
+				setServerState("disconnected");
 				socket = null;
 			}
 			socket.onmessage = function(event) {

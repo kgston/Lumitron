@@ -68,3 +68,33 @@ var params = {
         "timeout": "3000"
 }
 lumitron.request.send("network", "isIpReachable", params);
+
+//Test pattern
+setInterval(function() {
+    var params = {
+            "device": "Lagute-0001",
+            "command": "setColour",
+            "colour": "0000FF"
+    }
+    lumitron.request.send("led", "sendCommand", params);
+}, 3000);
+setTimeout(function() {
+    setInterval(function() {
+        var params = {
+                "device": "Lagute-0001",
+                "command": "setColour",
+                "colour": "FF0000"
+        }
+        lumitron.request.send("led", "sendCommand", params);
+    }, 3000);
+},1000);
+setTimeout(function() {
+    setInterval(function() {
+        var params = {
+                "device": "Lagute-0001",
+                "command": "setColour",
+                "colour": "00FF00"
+        }
+        lumitron.request.send("led", "sendCommand", params);
+    }, 3000);
+},2000);
