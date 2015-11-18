@@ -15,4 +15,8 @@ public class NetworkService implements LumitronService {
     public void isIpReachable() {
         RequestHandler.send(serviceRoute.get("uuid"), NetworkHandler.isIpReachable(params));
     }
+
+    public void getMacAddress() {
+        RequestHandler.send(serviceRoute.get("uuid"), NetworkHandler.getMacAddress(params));
+    }
 }

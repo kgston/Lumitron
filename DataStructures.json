@@ -98,3 +98,9 @@ setTimeout(function() {
         lumitron.request.send("led", "sendCommand", params);
     }, 3000);
 },2000);
+
+
+var params = {
+    "ipAddress": "192.168.1.3"
+}
+lumitron.request.send("network", "getMacAddress", params);
