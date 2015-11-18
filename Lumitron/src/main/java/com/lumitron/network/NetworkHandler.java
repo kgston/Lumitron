@@ -13,23 +13,23 @@ public class NetworkHandler {
 
         // Return the formatted response
         HashMap<String, String> response = new HashMap<String, String>();
-        response.put("ip_address", ipAddress);
-        response.put("is_reachable", isIpReachable ? "true" : "false");
+        response.put("ipAddress", ipAddress);
+        response.put("isAlive", isIpReachable ? "true" : "false");
 
         return response;
     }
 
     public static HashMap<String, String> getMacAddress(HashMap<String, String> params) {
         // Get the parameters
-        String ipAddress = params.get("ip_address");
+        String ipAddress = params.get("ipAddress");
 
         // Get the MAC address
         String macAddress = Network.getMacAddressFromArpTable(ipAddress);
 
         // Return the formatted response
         HashMap<String, String> response = new HashMap<String, String>();
-        response.put("ip_address", ipAddress);
-        response.put("mac_address", (macAddress != null) ? macAddress : "");
+        response.put("ipAddress", ipAddress);
+        response.put("macAddress", (macAddress != null) ? macAddress : "");
 
         return response;
     }
