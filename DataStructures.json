@@ -68,3 +68,8 @@ var params = {
         "timeout": "3000"
 }
 lumitron.request.send("network", "isIpReachable", params);
+
+var params = {
+        "ip_address": "192.168.1.3"
+}
+lumitron.request.send("network", "getMacAddress", params);
