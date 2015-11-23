@@ -51,5 +51,20 @@
             "serviceClass": "com.lumitron.network.RequestService",
             "method": "resendResponse"
         }
+    },
+    "sheet": {
+        //Service Name
+        "load": {
+            "serviceClass": "com.lumitron.sheet.SheetService",
+            "method": "load"
+        },
+        "save": {
+            "serviceClass": "com.lumitron.sheet.SheetService",
+            "method": "save"
+        },
+        "read": {
+            "serviceClass": "com.lumitron.sheet.SheetService",
+            "method": "read"
+        }
     }
 }

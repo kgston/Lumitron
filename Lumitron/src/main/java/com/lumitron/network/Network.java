@@ -18,14 +18,18 @@ public class Network {
     public static boolean isIpReachable(String ipAddress, int timeout) throws LumitronException {
         boolean isIpReachable = false;
 
+        if (ipAddress == null) {
+            throw new LumitronException(Network.class.getSimpleName(), "0001", "The parameter IP address cannot be null");
+        }
+
         try {
             if (InetAddress.getByName(ipAddress).isReachable(timeout)) {
                 isIpReachable = true;
             }
         } catch (UnknownHostException e) {
-            throw new LumitronException(NetworkService.class.getSimpleName(), "0001", "Unknown host");
+            throw new LumitronException(Network.class.getSimpleName(), "0002", "Unknown host");
         } catch (IOException e) {
-            throw new LumitronException(NetworkService.class.getSimpleName(), "0002", "A network error occurred");
+            throw new LumitronException(Network.class.getSimpleName(), "0003", "A network error occurred");
         }
 
         return isIpReachable;
@@ -51,8 +55,9 @@ public class Network {
             // Parse the output of the command, looking for the MAC address if exists
             Scanner s = new Scanner(arpProcess.getInputStream());
             macAddress =  s.findWithinHorizon("([0-9a-fA-F]{2}-){5}([0-9a-fA-F]{2})", 0);
+            s.close();
         } catch (IOException e) {
-            throw new LumitronException(NetworkService.class.getSimpleName(), "0003", "An error occurred while retrieving the MAC Address");
+            throw new LumitronException(Network.class.getSimpleName(), "0004", "An error occurred while retrieving the MAC Address");
         }
 
         return macAddress;
