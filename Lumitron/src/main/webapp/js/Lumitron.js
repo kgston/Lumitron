@@ -6,7 +6,7 @@ lumitron = (function() {
 	//Private methods
 	//Converts all external SVGs into inline SVGs so they can be manipulated by CSS  
 	var inlineSVG = function() {
-		//http://stackoverflow.com/questions/11978995/how-to-change-color-of-svg-image-using-css-jquery-svg-image-replacement
+        //http://stackoverflow.com/questions/11978995/how-to-change-color-of-svg-image-using-css-jquery-svg-image-replacement
 		jQuery('img.svg').each(function(){
             var $img = jQuery(this);
             var imgID = $img.attr('id');

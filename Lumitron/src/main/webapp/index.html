@@ -5,11 +5,14 @@
     <meta charset="UTF-8">
 	<title>Lumitron</title>
 	
+	<link rel="stylesheet" href="css/stencilTemplates.css">
 	<link rel="stylesheet" href="css/lumitron.css">
 	<script src="js/jquery-2.1.4.js"></script>
     <script src="js/stencil.js"></script>
+    <script src="js/stencilTemplates.js"></script>
     <script src="js/Lumitron.js"></script>
     <script src="js/Request.js"></script>
+    <script src="js/Events.js"></script>
 </head>
 
 <body>
@@ -20,15 +23,15 @@
         </div>
         <div id="serverState" class="titleGroupRight">
             <stencil id="serverStatusStencil">
-                <img class="svg iconSmall pointer" src="css/icons/Entypo/{{icon}}"/>
+                <img class="svg iconSmall pointer {{class}}" src="css/icons/Entypo/{{icon}}"/>
             </stencil>
         </div>
         <div class="orangeGlowLine"></div>
     </div>
     <div id="main">
         <div id="controllersPanel">
-            <h2 class="whiteGlowFont">Active</h2>
-            <div class="whiteGlowLine"></div>
+            <h3 class="whiteGlowFont">Active</h2>
+            <div class="greyThinLine"></div>
             <div id="registeredControllers" class="controllerPanel">
                 <div class="controller">
                     <div class="deviceTitle">
@@ -86,9 +89,36 @@
                     </div>
                     <div class="blueGlowRightLine"></div>
                 </div>
+                <div class="controller">
+                    <div class="deviceTitle">
+                        <h3 class="whiteGlowFont">Device 2</h3>
+                        <div class="deviceStatuses">
+                            <img class="connectionStrength svg iconXSmall pointer" src="css/icons/Entypo/progress-one.svg"/>
+                            <img class="svg iconXSmall pointer" src="css/icons/Entypo/minus.svg"/>
+                        </div>
+                    </div>
+                    <div class="infoPanel">
+                        <div class="infoLabels">
+                            <span>IP Address</span>
+                            <span>State</span>
+                            <span>Brightness</span>
+                            <span>Colour</span>
+                        </div>
+                        <div class="infoValues">
+                            <span>10.10.1.1</span>
+                            <span>On</span>
+                            <span>30</span>
+                            <span>#FFFFFF</span>
+                        </div>
+                    </div>
+                    <div class="controlPanel">
+                        
+                    </div>
+                    <div class="blueGlowRightLine"></div>
+                </div>
             </div>
-            <h2 class="whiteGlowFont">Inactive</h2>
-            <div class="whiteGlowLine"></div>
+            <h3 class="whiteGlowFont">Inactive</h2>
+            <div class="greyThinLine"></div>
             <div id="unregisteredControllers">
                 <div class="controller">
                     <div class="deviceTitle">
@@ -119,9 +149,36 @@
                 </div>
             </div>
         </div>
-        <div id="eventsPanel"></div>
+        <div id="eventsPanel">
+            <h3 class="whiteGlowFont">Events</h2>
+            <div class="greyThinLine"></div>
+            <div id="eventsTable"></div>
+            <div id="eventsControl">
+                <img id="play" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/plus.svg"/>
+                <img id="play" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/minus.svg"/>
+            </div>
+        </div>
     </div>
-    <div id="musicPlayer"></div>
+    <div id="musicPlayer">
+        <div class="greyThinLine"></div>
+        <div id="musicControl">
+            <div id="musicTimeline" class="greyThinLine pointer"></div>
+            <div id="playbackTimeline" class="orangeGlowLine pointer"></div>
+            <div id="playbackControl">
+                <div id="playbackControlLeft">
+                    <img id="play" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-play.svg"/>
+                    <img id="pause" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-paus.svg"/>
+                    <img id="stop" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-stop.svg"/>
+                    <img id="stop" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-volume.svg"/>
+                    <div class="playbackControlIcon">
+                        <span>1:15</span><span> / </span><span>3:00</span>
+                    </div>
+                </div>
+                <div id="playbackControlRight">
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="pushedItems"></div>
 </body>
 
