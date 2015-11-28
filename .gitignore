@@ -1,5 +1,7 @@
 .gradle
 .settings
+.vscode
 build
 /Lumitron/bin
+/typings
 .classpath

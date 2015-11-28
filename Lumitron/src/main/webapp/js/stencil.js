@@ -1,15 +1,18 @@
-//Version 13
+/*
+stencil.js
+version 14
+Kingston Chan - Released under the MIT licence
+*/
 var stencil = {
     stencilHolder: {},
     //Define a new Stencil instance given a 
     //compulsory TagID as a template; which will include the inner HTML of the element the ID points to,
     //an optional destination, where the it will render to the inner HTML of all elements given with the given class,
     //If no destination is specified, template will output after the template with its own output container
-    //and optional specificInners, which lists all Tag IDs of childStencils that do not use/unable to use standard stencil tags
     //and optional finalOutputElementType where you can specify a type of element container to hold your output
     //<stencil> tags
-    //Element ID - String, optional?Element class - String, optional?Element IDs - Array[String], optional?Element type - String
-    define: function (tagID, destination, specificInners, finalOutputElementType) {
+    //Element ID - String, optional?Element class - String, optional?Element type - String, private! jQueryFragment
+    define: function (tagID, destination, finalOutputElementType, stencilFragment) {
         //Builds a Stencil object and returns the created instance
         //Private method, for internal use only
         var getStencil = function(tagID, destination, template) {
@@ -23,6 +26,28 @@ var stencil = {
                 existingContent: "",
                 clear: function() {
                     $(this.destination).empty().append(this.existingContent);
+                },
+
+                getChild: function(childID) {
+                    var currentChildStencils = this.childStencils;
+                    var found = null;
+                    if(Object.keys(currentChildStencils).length === 0) {
+                        return null;
+                    }
+                    if(Object.keys(currentChildStencils).indexOf(childID) >= 0) {
+                        found = currentChildStencils[childID];
+                    } else {
+                        Object.keys(currentChildStencils).every(function(childStencil) {
+                            var result = currentChildStencils[childStencil].getChild(childID);
+                            if(result == null) {
+                                return true;
+                            } else {
+                                found = result;
+                                return false;
+                            }
+                        });
+                    }
+                    return found;
                 },
 
                 //Renders out a stencil template into screen given
@@ -42,6 +67,9 @@ var stencil = {
                     if (!(Array.isArray(dataset))) {
                         if(stencil.util.isObject(dataset)) {
                             dataset = [dataset];
+                        } else if(typeof dataset === "undefined") {
+                            stencil.util.log("Stencil - " + this.tagID + ": has no data, skipping...");
+                            return false;
                         } else {
                             stencil.util.log("Stencil - " + this.tagID + ": dataset in an invalid format, detected: " + typeof dataset);
                             return false;
@@ -217,6 +245,7 @@ var stencil = {
         };
 
         var tagElem = $("#" + stencil.util.escapeCSS(tagID));
+        var specificInners;
 
         //Return a existing stencil if already initialized because template is already removed once initalized
         if(stencil.stencilHolder[tagID] != null) {
@@ -238,18 +267,22 @@ var stencil = {
             return newStencil;
         }
         
-        //If Tag ID not found, exit
-        if(!tagElem.length) {
-            stencil.util.log("Stencil: Tag ID '" + tagID + "' provided is not found!");
-            return null;
+        //If no stencilFragment specified, get html from tagID
+        if(!stencilFragment) {
+            if(!tagElem.length) {
+                stencil.util.log("Stencil: Tag ID '" + tagID + "' provided is not found!");
+                return null;
+            } else {
+                stencilFragment = tagElem.detach();
+            }
         }
 
         //Check if data-childStencil attribute exists and set it into the specific inners array
-        if(tagElem.attr("data-childStencil") != null && tagElem.attr("data-childStencil") != "") {
+        if(stencilFragment.attr("data-childStencil") != null && stencilFragment.attr("data-childStencil") != "") {
             if(specificInners == null) {
                 specificInners = [];
             }
-            tagElem.attr("data-childStencil").split(" ").forEach(function(childStencilID) {
+            stencilFragment.attr("data-childStencil").split(" ").forEach(function(childStencilID) {
                 if(childStencilID != "") {
                     specificInners.push(childStencilID);
                 }
@@ -264,8 +297,8 @@ var stencil = {
 
         //If there are more descendent stencil tags, recursively define them 
         //and attach them as child of their parents
-        if(tagElem.find("stencil").length !== 0) {
-            childStencils = stencil.util.findStencils(tagElem);
+        if(stencilFragment.find("stencil").length !== 0) {
+            childStencils = stencil.util.findStencils(stencilFragment);
         }
         stencil.util.log("Stencil: Completed child stencil generation for " + tagID + ", " + 
             Object.keys(childStencils).length + " child stencil");
@@ -274,7 +307,7 @@ var stencil = {
         if(specificInners != null) {
             specificInners.every(function(innerTagID) {
                 stencil.util.log("Stencil: Building specified child stencil: " + innerTagID);
-                var tag = $("#" + stencil.util.escapeCSS(innerTagID));
+                var tag = stencilFragment.find("#" + stencil.util.escapeCSS(innerTagID));
                 if(!tag.length) {
                     stencil.util.log("Stencil: Specified child stencil: " + innerTagID + " not found!");
                     return false;
@@ -298,18 +331,18 @@ var stencil = {
         //If a destination is not specified, insert the output after the template.
         if(destination == null) {
             destination = stencil.util.createWrapper(
-                tagElem, 
+                stencilFragment, 
                 (finalOutputElementType == null)? stencil.opts.defaultOutputElement: finalOutputElementType, 
                 "after");
         }
         //Build the parentStencil
-        var parentStencil = getStencil(tagID, destination, tagElem.html());
+        var parentStencil = getStencil(tagID, destination, stencilFragment.html());
         //Set all the child stencils built earlier
         parentStencil.childStencils = childStencils;
         
         //Remove the stencil template
         //Only can remove at the end because it needs to build the childStencils first before removing
-        tagElem.remove(); 
+        stencilFragment.remove(); 
         
         //Save to the holder before returning stencil object
         stencil.stencilHolder[tagID] = parentStencil;
@@ -329,16 +362,17 @@ var stencil = {
         //Creates a new GUID
         guid: function () {
             //Retrieved from http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
-            function s4() {
-                return Math.floor((1 + Math.random()) * 0x10000)
-                    .toString(16)
-                    .substring(1);
+            var d = new Date().getTime();
+            if(window.performance && typeof window.performance.now === "function"){
+                d += performance.now(); //use high-precision timer if available
             }
-            return function () {
-                return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-                    s4() + '-' + s4() + s4() + s4();
-            };
-        }(),
+            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = (d + Math.random()*16)%16 | 0;
+                d = Math.floor(d/16);
+                return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+            });
+            return uuid;
+        },
         //Selects the given value in the drop down box for the given select element 
         selectOption: function(selectElement, valueToSelect) {
             selectElement.children().each(function() {
@@ -381,7 +415,7 @@ var stencil = {
                         search(childNodes[i], collection);
                     } else {
                         //Otherwise define the stencil at this node and stop for this branch
-                        collection[childNodes[i].id] = stencil.define(childNodes[i].id, null, null, "stencil-output");
+                        collection[childNodes[i].id] = stencil.define(childNodes[i].id, null, "stencil-output", $(childNodes[i]));
                     }
                 }
             }
@@ -524,6 +558,6 @@ var stencil = {
     },
     opts: {
         debug: false,
-        defaultOutputElement: "stencil-output"
+        defaultOutputElement: "div"
     }
 };

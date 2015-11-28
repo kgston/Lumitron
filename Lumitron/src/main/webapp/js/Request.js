@@ -1,3 +1,5 @@
+var lumitron = lumitron || {};
+
 lumitron.request = (function() {
 	//Private vars
 	var serverURL = "ws://localhost:8080/Lumitron/ws/request";
@@ -19,14 +21,23 @@ lumitron.request = (function() {
     var setServerState = function(state) {
         switch(state) {
             case "loading":
-                serverStateUI.render({icon: "dots-three-horizontal.svg"});
+                serverStateUI.render({
+                    class: "iconDisabled",
+                    icon: "dots-three-horizontal.svg"
+                });
                 break;
             case "connected":
-                serverStateUI.render({icon: "bar-graph.svg"});
+                serverStateUI.render({
+                    class: "iconActive",
+                    icon: "bar-graph.svg"}
+                );
                 $("#serverState").off().click(lumitron.request.close);
                 break;
             case "disconnected":
-                serverStateUI.render({icon: "warning.svg"});
+                serverStateUI.render({
+                    class: "iconError",
+                    icon: "warning.svg"}
+                );
                 $("#serverState").off().click(lumitron.request.open);
                 break;
         }
