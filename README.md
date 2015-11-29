@@ -52,8 +52,11 @@ While I sometimes like to think I'm a coding god, reality is tougher than it see
 ## Contribuitors
 - Kingston Chan
 - Christophe Michard
-- Wang Zhiyue
+
+## Special Thanks
 - Vadim Burlakin
+- Wang Zhiyue
 
 ## Acknoledgements
 [Entypo+ pictograms](http://www.entypo.com/index.php)
+[mp3transform](https://code.google.com/p/mp3transform/)

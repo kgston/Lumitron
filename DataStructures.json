@@ -64,10 +64,22 @@ var params = {
 lumitron.request.send("led", "sendCommand", params);
 
 var params = {
-        "ip_address": "192.168.1.3",
+        "ipAddress": "192.168.1.3",
         "timeout": "3000"
 }
 lumitron.request.send("network", "isIpReachable", params);
+
+//Music
+var params = {
+        "file": "C:\\Fresh.mp3"
+}
+lumitron.request.send("music", "load", params);
+
+lumitron.request.send("music", "play", null);
+
+lumitron.request.send("music", "pause", null);
+
+lumitron.request.send("music", "stop", null);
 
 //Test pattern
 setInterval(function() {
