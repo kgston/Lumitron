@@ -13,6 +13,7 @@
     <script src="js/Lumitron.js"></script>
     <script src="js/Request.js"></script>
     <script src="js/Events.js"></script>
+    <script src="js/Music.js"></script>
 </head>
 
 <body>
@@ -154,8 +155,8 @@
             <div class="greyThinLine"></div>
             <div id="eventsTable"></div>
             <div id="eventsControl">
-                <img id="play" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/plus.svg"/>
-                <img id="play" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/minus.svg"/>
+                <img id="addEvent" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/plus.svg"/>
+                <img id="removeEvent" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/minus.svg"/>
             </div>
         </div>
     </div>
@@ -166,12 +167,17 @@
             <div id="playbackTimeline" class="orangeGlowLine pointer"></div>
             <div id="playbackControl">
                 <div id="playbackControlLeft">
-                    <img id="play" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-play.svg"/>
-                    <img id="pause" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-paus.svg"/>
-                    <img id="stop" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-stop.svg"/>
-                    <img id="stop" class="svg playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-volume.svg"/>
+                    <div>
+                        <img id="play" class="svg iconDisabled playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-play.svg"/>
+                    </div>
+                    <div>
+                        <img id="pause" class="svg iconDisabled playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-paus.svg"/>
+                    </div>
+                    <div>
+                        <img id="stop" class="svg iconDisabled playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-stop.svg"/>
+                    </div>
                     <div class="playbackControlIcon">
-                        <span>1:15</span><span> / </span><span>3:00</span>
+                        <span id="currentPlaybackTime">0:00</span><span> / </span><span id="totalPlaybackTime">0:00</span>
                     </div>
                 </div>
                 <div id="playbackControlRight">
