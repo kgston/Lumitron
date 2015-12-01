@@ -84,7 +84,7 @@ lumitron.request = (function() {
 						delete pendingResponses[uuid];
 					}
 				} else if(type === "error") {
-					responseData = responseData.error;
+					responseData = response.error;
 					request.deferred.reject(responseData);
 					delete pendingResponses[uuid];
 				} else {
