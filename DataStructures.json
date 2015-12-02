@@ -25,47 +25,10 @@
     }
 }
 
-
-
-
-lumitron.request.send("led", "getAvailableControllers");
-
-lumitron.request.send("led", "sendCommand", {"deviceName": "Lagute-0001"});
-
-lumitron.request.send("led", "sendCommand", {"deviceName": "Lagute-0001", "command": "on"});
-
+// Network
 var params = {
-        "device": "Lagute-0001",
-        "command": "setColour",
-        "colour": "00FF00"
-}
-lumitron.request.send("led", "sendCommand", params);
-
-var params = {
-        "device": "Lagute-0001",
-        "command": "setBrightness",
-        "brightness": "50"
-}
-lumitron.request.send("led", "sendCommand", params);
-
-var params = {
-        "device": "Lagute-0001",
-        "command": "transitionToColour",
-        "colour": "FF00FF",
-        "pauseInterval": "3",
-        "incrementInterval": "1"
-}
-lumitron.request.send("led", "sendCommand", params);
-
-var params = {
-        "device": "Lagute-0001",
-        "command": "off"
-}
-lumitron.request.send("led", "sendCommand", params);
-
-var params = {
-        "ipAddress": "192.168.1.3",
-        "timeout": "3000"
+    "ipAddress": "192.168.1.3",
+    "timeout": "3000"
 }
 lumitron.request.send("network", "isIpReachable", params);
 
@@ -74,9 +37,68 @@ var params = {
 }
 lumitron.request.send("network", "getMacAddress", params);
 
+// Controller registration
+lumitron.request.send("led", "getAvailableControllerModels");
+
+lumitron.request.send("led", "getRegisteredControllers");
+
+var params = {
+    "model": "Lagute",
+    "name": "Lagute-0001",
+    "ipAddress": "192.168.1.3"
+}
+lumitron.request.send("led", "registerController", params);
+
+var params = {
+    "name": "Lagute-0001",
+}
+lumitron.request.send("led", "deregisterController", params);
+
+// Led manipulation
+var params = {
+    "device": "Lagute-0001",
+    "command": "queryStatus"
+}
+lumitron.request.send("led", "sendCommand", params);
+
+var params = {
+    "device": "Lagute-0001",
+    "command": "on"
+}
+lumitron.request.send("led", "sendCommand", params);
+
+var params = {
+    "device": "Lagute-0001",
+    "command": "off"
+}
+lumitron.request.send("led", "sendCommand", params);
+
+var params = {
+    "device": "Lagute-0001",
+    "command": "setColour",
+    "colour": "00FF00"
+}
+lumitron.request.send("led", "sendCommand", params);
+
+var params = {
+    "device": "Lagute-0001",
+    "command": "setBrightness",
+    "brightness": "50"
+}
+lumitron.request.send("led", "sendCommand", params);
+
+var params = {
+    "device": "Lagute-0001",
+    "command": "transitionToColour",
+    "colour": "FF00FF",
+    "pauseInterval": "3",
+    "incrementInterval": "1"
+}
+lumitron.request.send("led", "sendCommand", params);
+
 //Music
 var params = {
-        "file": "C:\\Fresh.mp3"
+    "file": "C:\\Fresh.mp3"
 }
 lumitron.request.send("music", "load", params);
 
@@ -89,29 +111,29 @@ lumitron.request.send("music", "stop", null);
 //Test pattern
 setInterval(function() {
     var params = {
-            "device": "Lagute-0001",
-            "command": "setColour",
-            "colour": "0000FF"
+        "device": "Lagute-0001",
+        "command": "setColour",
+        "colour": "0000FF"
     }
     lumitron.request.send("led", "sendCommand", params);
 }, 3000);
 setTimeout(function() {
     setInterval(function() {
         var params = {
-                "device": "Lagute-0001",
-                "command": "setColour",
-                "colour": "FF0000"
+            "device": "Lagute-0001",
+            "command": "setColour",
+            "colour": "FF0000"
         }
         lumitron.request.send("led", "sendCommand", params);
     }, 3000);
-},1000);
+}, 1000);
 setTimeout(function() {
     setInterval(function() {
         var params = {
-                "device": "Lagute-0001",
-                "command": "setColour",
-                "colour": "00FF00"
+            "device": "Lagute-0001",
+            "command": "setColour",
+            "colour": "00FF00"
         }
         lumitron.request.send("led", "sendCommand", params);
     }, 3000);
-},2000);
+}, 2000);
