@@ -1,5 +1,6 @@
 package com.lumitron.led;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -15,12 +16,12 @@ public class LedHandler {
         return response;
     }
 
-    public static HashMap<String, HashMap<String, HashMap<String, String>>> getRegisteredControllers() {
+    public static HashMap<String, ArrayList<HashMap<String, String>>> getRegisteredControllers() {
         // Get the registered controllers
-        HashMap<String, HashMap<String, String>> registeredControllers = LedControllerManager.getRegisteredControllers();
+        ArrayList<HashMap<String, String>> registeredControllers = LedControllerManager.getRegisteredControllers();
 
         // Return the formatted response
-        HashMap<String, HashMap<String, HashMap<String, String>>> response = new HashMap<>();
+        HashMap<String, ArrayList<HashMap<String, String>>> response = new HashMap<>();
         response.put("registeredControllers", registeredControllers);
 
         return response;

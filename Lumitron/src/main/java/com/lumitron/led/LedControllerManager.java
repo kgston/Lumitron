@@ -1,17 +1,18 @@
 package com.lumitron.led;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public class LedControllerManager {
-    private static final HashMap<String, String> CONTROLLER_MODELS_CLASS_MAP = new HashMap<>();
+    private static final HashMap<String, Class<?>> CONTROLLER_MODELS_CLASS_MAP = new HashMap<>();
     static {
-        CONTROLLER_MODELS_CLASS_MAP.put("Lagute", "com.lumitron.led.LaguteLedController");
+        CONTROLLER_MODELS_CLASS_MAP.put(LaguteLedController.MODEL, LaguteLedController.class);
     }
 
     private static HashMap<String, LedController> registeredControllers = new HashMap<>();
-    private static HashMap<String, HashMap<String, String>> registeredControllersInfo = new HashMap<>();
 
     /**
      * Get all available controller models that can be registered
@@ -25,8 +26,19 @@ public class LedControllerManager {
      * Get all registered controllers information
      * @return A list of the registered controller information ("name": {"model", "ipAddress"})
      */
-    public static HashMap<String, HashMap<String, String>> getRegisteredControllers() {
-        return registeredControllersInfo;
+    public static ArrayList<HashMap<String, String>> getRegisteredControllers() {
+        ArrayList<HashMap<String, String>> controllersInfo = new ArrayList<>();
+
+        for (Entry<String, LedController> element : registeredControllers.entrySet()) {
+            HashMap<String, String> controllerInfo = new HashMap<>();
+            controllerInfo.put("model", element.getValue().getModel());
+            controllerInfo.put("name", element.getValue().getName());
+            controllerInfo.put("ipAddress", element.getValue().getIpAddress());
+
+            controllersInfo.add(controllerInfo);
+        }
+
+        return controllersInfo;
     }
 
     /**
@@ -35,7 +47,7 @@ public class LedControllerManager {
      * @return True if the controller is registered, false otherwise
      */
     public static boolean isControllerRegistered(String name) {
-        return registeredControllers.get(name) != null && registeredControllersInfo.containsKey(name);
+        return registeredControllers.get(name) != null;
     }
 
     /**
@@ -65,27 +77,20 @@ public class LedControllerManager {
         LedController ledController = null;
 
         try {
-            Class<?> ledControllerClass = Class.forName(CONTROLLER_MODELS_CLASS_MAP.get(model));
+            Class<?> ledControllerClass = CONTROLLER_MODELS_CLASS_MAP.get(model);
             Constructor<?> ledControllerConstructor = ledControllerClass.getConstructor(String.class, String.class);
             ledController = (LedController) ledControllerConstructor.newInstance(name, ipAddress);
-        } catch (ClassNotFoundException e) {
-            throw new LedException(LedControllerManager.class.getSimpleName(), "0004", "Led controller class not found '" + CONTROLLER_MODELS_CLASS_MAP.get(model) + "'");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new LedException(LedControllerManager.class.getSimpleName(), "0005", "Led controller registration failed (unknown error occurred)");
+            throw new LedException(LedControllerManager.class.getSimpleName(), "0004", "Led controller registration failed (unknown error occurred)");
         }
 
         // Register the new controller
         if (ledController == null) {
-            throw new LedException(LedControllerManager.class.getSimpleName(), "0006", "Led controller registration failed");
+            throw new LedException(LedControllerManager.class.getSimpleName(), "0005", "Led controller registration failed");
         }
 
-        HashMap<String, String> controllerInfo = new HashMap<>();
-        controllerInfo.put("model", model);
-        controllerInfo.put("ipAddress", ipAddress);
-
         registeredControllers.put(name, ledController);
-        registeredControllersInfo.put(name, controllerInfo);
     }
 
     /**
@@ -94,7 +99,6 @@ public class LedControllerManager {
      */
     public static void deregisterController(String name) {
         registeredControllers.remove(name);
-        registeredControllersInfo.remove(name);
     }
 
     /**
@@ -108,10 +112,10 @@ public class LedControllerManager {
     public static boolean sendCommand(String controllerName, String command, HashMap<String, String> params) throws LedException {
         // Check the parameters
         if (controllerName == null || controllerName.isEmpty()) {
-            throw new LedException(LedControllerManager.class.getSimpleName(), "0007", "The controller name must be specified");
+            throw new LedException(LedControllerManager.class.getSimpleName(), "0006", "The controller name must be specified");
         }
         if (command == null || command.isEmpty()) {
-            throw new LedException(LedControllerManager.class.getSimpleName(), "0008", "The command must be specified");
+            throw new LedException(LedControllerManager.class.getSimpleName(), "0007", "The command must be specified");
         }
 
         // Get the registered controller
@@ -142,7 +146,7 @@ public class LedControllerManager {
                 controller.transitionToColour(params.get("pauseInterval"), params.get("incrementInterval"), params.get("colour"));
                 break;
             default:
-                throw new LedException(LedControllerManager.class.getSimpleName(), "0009", "Unknown command '" + command + "'");
+                throw new LedException(LedControllerManager.class.getSimpleName(), "0008", "Unknown command '" + command + "'");
         }
 
         return true;
