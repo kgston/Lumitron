@@ -18,7 +18,6 @@ import com.lumitron.util.AppSystem;
  *
  */
 public abstract class GenericLedController implements LedController {
-    
     protected String deviceName;
     
     protected String ipAddress;
@@ -46,6 +45,22 @@ public abstract class GenericLedController implements LedController {
         } else {
             AppSystem.log(this.getClass(), "No response from device");
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return deviceName;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getIpAddress() {
+        return ipAddress;
     }
     
     /* (non-Javadoc)

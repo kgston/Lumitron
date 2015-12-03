@@ -8,6 +8,7 @@ import com.lumitron.util.AppSystem;
  *
  */
 public class LaguteLedController extends GenericLedController {
+    public static final String MODEL = "Lagute";
     
     private final String HEADER = "7E";
     private final String FOOTER = "00EF";
@@ -25,6 +26,14 @@ public class LaguteLedController extends GenericLedController {
      */
     public LaguteLedController(String deviceName, String ipAddress) throws LedException {
         super(deviceName, ipAddress, 5000);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getModel() {
+        return MODEL;
     }
     
     /* (non-Javadoc)
