@@ -9,8 +9,11 @@ var stencil = {
     //compulsory TagID as a template; which will include the inner HTML of the element the ID points to,
     //an optional destination, where the it will render to the inner HTML of all elements given with the given class,
     //If no destination is specified, template will output after the template with its own output container
+
     //and optional finalOutputElementType where you can specify a type of element container to hold your output
     //<stencil> tags
+
+
     //Element ID - String, optional?Element class - String, optional?Element type - String, private! jQueryFragment
     define: function (tagID, destination, finalOutputElementType, stencilFragment) {
         //Builds a Stencil object and returns the created instance
@@ -85,7 +88,9 @@ var stencil = {
                     var destinationElem;
                     //If this is the starting stencil
                     if(parentElem == null) {
-                        if(destination === "none") {
+                        //Search for the destination DOM and get its parent
+                        parentElem = $(destination);
+                        if(destination === "none" || output === "none" || output === "string" || output === "fragment") {
                             if(output === "none" || output === "string" || output === "fragment") {
                                 destinationElem = $(document.createElement('div'));
                             } else {
@@ -93,8 +98,6 @@ var stencil = {
                                 return false;
                             }
                         } else {
-                            //Search for the destination DOM and get its parent
-                            parentElem = $(destination);
                             //Make a clone of one of the destination (in case there may be more than 1)
                             //Don't empty it yet as we may need the data in the element
                             //From here on out, it will add changes to the cloned element which is separate fragment
@@ -125,8 +128,9 @@ var stencil = {
                             //None behaviour is to empty the output and return the fragement
                             parentElem.empty();
                             destinationElem.empty();
-                        } else {
+                        } else if(output === "string" || output === "fragment") {
                             //Else Fragment or String behaviour is to leave the output alone and return the fragement
+                        } else {
                             destinationElem.empty();
                         }
                     } else {
@@ -244,7 +248,6 @@ var stencil = {
             return newStencil;
         };
 
-        var tagElem = $("#" + stencil.util.escapeCSS(tagID));
         var specificInners;
 
         //Return a existing stencil if already initialized because template is already removed once initalized
@@ -268,13 +271,19 @@ var stencil = {
         }
         
         //If no stencilFragment specified, get html from tagID
-        if(!stencilFragment) {
-            if(!tagElem.length) {
-                stencil.util.log("Stencil: Tag ID '" + tagID + "' provided is not found!");
-                return null;
-            } else {
-                stencilFragment = tagElem.detach();
+        var tagElem = stencilFragment || $("#" + stencil.util.escapeCSS(tagID));
+        if(!tagElem.length) {
+            stencil.util.log("Stencil: Tag ID '" + tagID + "' provided is not found!");
+            return null;
+        } else {
+            //If a destination is not specified, insert the output after the template.
+            if(destination == null) {
+                destination = stencil.util.createWrapper(
+                    tagElem, 
+                    (finalOutputElementType == null)? stencil.opts.defaultOutputElement: finalOutputElementType, 
+                    "after");
             }
+            stencilFragment = tagElem.detach();
         }
 
         //Check if data-childStencil attribute exists and set it into the specific inners array
@@ -305,12 +314,12 @@ var stencil = {
 
         //Check if there are any non standard specific child stencils
         if(specificInners != null) {
-            specificInners.every(function(innerTagID) {
+            specificInners.forEach(function(innerTagID) {
                 stencil.util.log("Stencil: Building specified child stencil: " + innerTagID);
                 var tag = stencilFragment.find("#" + stencil.util.escapeCSS(innerTagID));
                 if(!tag.length) {
                     stencil.util.log("Stencil: Specified child stencil: " + innerTagID + " not found!");
-                    return false;
+                    return;
                 }
 
                 //Changed this from ID to class selector because when you replicate multiple copies of the parent 
@@ -324,17 +333,9 @@ var stencil = {
                 childStencils[innerTagID] = getStencil(innerTagID, innerDestination, tag.html());
                 childStencils[innerTagID].isStandard = false;
                 tag.empty();
-                return true;
             });
         }
-        
-        //If a destination is not specified, insert the output after the template.
-        if(destination == null) {
-            destination = stencil.util.createWrapper(
-                stencilFragment, 
-                (finalOutputElementType == null)? stencil.opts.defaultOutputElement: finalOutputElementType, 
-                "after");
-        }
+
         //Build the parentStencil
         var parentStencil = getStencil(tagID, destination, stencilFragment.html());
         //Set all the child stencils built earlier
@@ -342,7 +343,7 @@ var stencil = {
         
         //Remove the stencil template
         //Only can remove at the end because it needs to build the childStencils first before removing
-        stencilFragment.remove(); 
+        //stencilFragment.remove(); 
         
         //Save to the holder before returning stencil object
         stencil.stencilHolder[tagID] = parentStencil;
@@ -371,7 +372,7 @@ var stencil = {
                 d = Math.floor(d/16);
                 return (c=='x' ? r : (r&0x3|0x8)).toString(16);
             });
-            return uuid;
+            return "stencil-" + uuid;
         },
         //Selects the given value in the drop down box for the given select element 
         selectOption: function(selectElement, valueToSelect) {
@@ -558,6 +559,6 @@ var stencil = {
     },
     opts: {
         debug: false,
-        defaultOutputElement: "div"
+        defaultOutputElement: "stencil-output"
     }
 };

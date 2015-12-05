@@ -3,11 +3,11 @@
     "music": {
         "file": ""
     },
-    "controllers": {
+    "controllers": [{
         "deviceName": "",
         "macAddress": "",
         "controller": ""
-    },
+    }],
     "events": [{
         "time": "", //ms
         "deviceName": "",

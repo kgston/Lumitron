@@ -220,12 +220,13 @@ public class RequestHandler {
         }).start();
     }
     
+    @SuppressWarnings("unchecked")
     public static void resend(String oldUUID, String newUUID) {
         HashMap<String, Object> responseInfo = cache.get(oldUUID);
         if(responseInfo != null) {
             String type = (String) responseInfo.get("type");
             boolean isComplete = (boolean) responseInfo.get("isComplete");
-            Object response = (Object) responseInfo.get("response");
+            HashMap<String, Object> response = (HashMap<String, Object>) responseInfo.get("response");
             send(newUUID, type, response, isComplete);
         } else {
             sendError(newUUID, RequestHandler.class.getSimpleName(), "0005", "Requested UUID not in cache");
@@ -237,7 +238,7 @@ public class RequestHandler {
      * @param uuid The request UUID
      * @param response The response object
      */
-    public static void send(String uuid, Object response) {
+    public static void send(String uuid, HashMap<String, Object> response) {
         send(uuid, "response", response, true);
     }
     
@@ -246,7 +247,7 @@ public class RequestHandler {
      * @param uuid The request UUID
      * @param response The response object
      */
-    public static void stream(String uuid, Object response) {
+    public static void stream(String uuid, HashMap<String, Object> response) {
         send(uuid, "response", response, false);
     }
     
@@ -266,7 +267,7 @@ public class RequestHandler {
      * @param errorMessage A UI presentable error message
      */
     public static void sendError(String uuid, String originator, String errorCode, String errorMessage) {
-        HashMap<String, String> error = new HashMap<>();
+        HashMap<String, Object> error = new HashMap<>();
         error.put("originator", originator);
         error.put("errorCode", errorCode);
         error.put("errorMessage", errorMessage);
@@ -280,7 +281,7 @@ public class RequestHandler {
      * @param response The response object
      * @param isComplete Is the request completed? If so, forget the request after it is done.
      */
-    private static void send(String uuid, String type, Object response, boolean isComplete) {
+    private static void send(String uuid, String type, HashMap<String, Object> response, boolean isComplete) {
         String jsonMsg = newResponse(uuid, type, response, isComplete);
         try {
             // Send response to session
@@ -304,7 +305,7 @@ public class RequestHandler {
         }
     }
     
-    private static void saveToCache(String uuid, String type, Object response, boolean isComplete) {
+    private static void saveToCache(String uuid, String type, HashMap<String, Object> response, boolean isComplete) {
         AppSystem.log(RequestHandler.class, "Error sending response for request <" + uuid + ">. Saving to cache");
         HashMap<String, Object> responseInfo = new HashMap<>();
         responseInfo.put("type", type);
@@ -345,7 +346,7 @@ public class RequestHandler {
      * @param isComplete Is the request completed? If so, forget the request after it is done.
      * @return The response formatted as JSON
      */
-    private static String newResponse(String uuid, String type, Object responseDetails, boolean isComplete) {
+    private static String newResponse(String uuid, String type, HashMap<String, Object> responseDetails, boolean isComplete) {
         HashMap<String, Object> response = new HashMap<>();
         
         //Populate data based on response type

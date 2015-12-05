@@ -2,66 +2,65 @@ package com.lumitron.led;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 public class LedHandler {
-    public static HashMap<String, Set<String>> getAvailableControllerModels() {
+    public static HashMap<String, Object> getDeviceControllers() {
         // Get the available controller models
-        Set<String> availableControllerModels = LedControllerManager.getAvailableControllerModels();
+        ArrayList<HashMap<String, String>> deviceControllers = LedDeviceManager.getDeviceControllers();
 
         // Return the formatted response
-        HashMap<String, Set<String>> response = new HashMap<>();
-        response.put("availableControllerModels", availableControllerModels);
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("deviceControllers", deviceControllers);
 
         return response;
     }
 
-    public static HashMap<String, ArrayList<HashMap<String, String>>> getRegisteredControllers() {
+    public static HashMap<String, Object> getRegisteredDevices() {
         // Get the registered controllers
-        ArrayList<HashMap<String, String>> registeredControllers = LedControllerManager.getRegisteredControllers();
+        ArrayList<HashMap<String, String>> registeredDevices = LedDeviceManager.getRegisteredDevices();
 
         // Return the formatted response
-        HashMap<String, ArrayList<HashMap<String, String>>> response = new HashMap<>();
-        response.put("registeredControllers", registeredControllers);
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("registeredDevices", registeredDevices);
 
         return response;
     }
 
-    public static HashMap<String, String> registerController(HashMap<String, String> params) {
+    public static HashMap<String, Object> registerDevice(HashMap<String, String> params) {
         // Get the parameters
         String model = params.get("model");
         String name = params.get("name");
         String ipAddress = params.get("ipAddress");
 
         // Register the controller
-        LedControllerManager.registerController(model, name, ipAddress);
-        boolean isControllerRegistered = LedControllerManager.isControllerRegistered(name);
+        LedDeviceManager.registerDevice(model, name, ipAddress);
+        boolean isDeviceRegistered = LedDeviceManager.isDeviceRegistered(name);
 
         // Return the formatted response
-        HashMap<String, String> response = new HashMap<>();
+        HashMap<String, Object> response = new HashMap<>();
         response.put("name", name);
-        response.put("isRegistered", isControllerRegistered ? "true" : "false");
+        response.put("isRegistered", isDeviceRegistered);
 
         return response;
     }
 
-    public static HashMap<String, String> deregisterController(HashMap<String, String> params) {
+    public static HashMap<String, Object> deregisterDevice(HashMap<String, String> params) {
         // Get the parameters
         String name = params.get("name");
 
         // Deregister the controller
-        LedControllerManager.deregisterController(name);
-        boolean isControllerRegistered = LedControllerManager.isControllerRegistered(name);
+        LedDeviceManager.deregisterController(name);
+        boolean isDeviceRegistered = LedDeviceManager.isDeviceRegistered(name);
 
         // Return the formatted response
-        HashMap<String, String> response = new HashMap<>();
+        HashMap<String, Object> response = new HashMap<>();
         response.put("name", name);
-        response.put("isRegistered", isControllerRegistered ? "true" : "false");
+        response.put("isRegistered", isDeviceRegistered);
 
         return response;
     }
 
-    public static HashMap<String, String> sendCommand(HashMap<String, String> params) {
+    public static HashMap<String, Object> sendCommand(HashMap<String, String> params) {
         // Get the parameters
         String device = (String) params.get("device");
         String command = (String) params.get("command");
@@ -72,13 +71,13 @@ public class LedHandler {
         commandParams.remove("command");
 
         // Send the command to the controller
-        boolean isCommandSent = LedControllerManager.sendCommand(device, command, commandParams);
+        boolean isCommandSent = LedDeviceManager.sendCommand(device, command, commandParams);
 
         // Return the formatted response
-        HashMap<String, String> response = new HashMap<>();
+        HashMap<String, Object> response = new HashMap<>();
         response.put("device", device);
         response.put("command", command);
-        response.put("isCommandSent", isCommandSent ? "true" : "false");
+        response.put("isCommandSent", isCommandSent);
 
         return response;
     }

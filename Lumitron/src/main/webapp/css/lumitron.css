@@ -297,17 +297,22 @@ button {
     display: flex;
     
 }
-#controllersPanel {
+.subHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#devicesPanel {
     flex: 3;
     display: flex;
     flex-direction: column;
 }
-.controllerPanel {
+.devicesPanel {
     display: flex;
     flex-wrap: wrap;
     align-content: space-between;
 }
-.controller {
+.device {
     display: flex;
     flex-direction: column;
     margin: 0px 20px;
@@ -395,7 +400,6 @@ button {
     display: flex;
     flex-direction: column;
     padding-top: 5px;
-    padding-right: 30px;
 }
 .infoLabels * {
     padding-left: 10px;
@@ -428,7 +432,7 @@ button {
         display: flex;
         flex-direction: column;
     }
-    #controllersPanel {   
+    #devicesPanel {   
         display: flex;
         flex-direction: column;
     }

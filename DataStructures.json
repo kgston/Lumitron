@@ -38,9 +38,9 @@ var params = {
 lumitron.request.send("network", "getMacAddress", params);
 
 // Controller registration
-lumitron.request.send("led", "getAvailableControllerModels");
+lumitron.request.send("led", "getDeviceControllers");
 
-lumitron.request.send("led", "getRegisteredControllers");
+lumitron.request.send("led", "getRegisteredDevices");
 
 var params = {
     "model": "Lagute",

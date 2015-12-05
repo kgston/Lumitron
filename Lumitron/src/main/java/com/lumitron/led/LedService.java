@@ -15,20 +15,20 @@ public class LedService implements LumitronService {
         this.params = requestData.get("params");
     }
 
-    public void getAvailableControllerModels() {
-        RequestHandler.send(serviceRoute.get("uuid"), LedHandler.getAvailableControllerModels());
+    public void getDeviceControllers() {
+        RequestHandler.send(serviceRoute.get("uuid"), LedHandler.getDeviceControllers());
     }
 
-    public void getRegisteredControllers() {
-        RequestHandler.send(serviceRoute.get("uuid"), LedHandler.getRegisteredControllers());
+    public void getRegisteredDevices() {
+        RequestHandler.send(serviceRoute.get("uuid"), LedHandler.getRegisteredDevices());
     }
 
-    public void registerController() {
-        RequestHandler.send(serviceRoute.get("uuid"), LedHandler.registerController(params));
+    public void registerDevice() {
+        RequestHandler.send(serviceRoute.get("uuid"), LedHandler.registerDevice(params));
     }
 
-    public void deregisterController() {
-        RequestHandler.send(serviceRoute.get("uuid"), LedHandler.deregisterController(params));
+    public void deregisterDevice() {
+        RequestHandler.send(serviceRoute.get("uuid"), LedHandler.deregisterDevice(params));
     }
 
     public void sendCommand() {
