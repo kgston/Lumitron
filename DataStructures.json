@@ -47,12 +47,12 @@ var params = {
     "name": "Lagute-0001",
     "ipAddress": "192.168.1.3"
 }
-lumitron.request.send("led", "registerController", params);
+lumitron.request.send("led", "registerDevice", params);
 
 var params = {
     "name": "Lagute-0001",
 }
-lumitron.request.send("led", "deregisterController", params);
+lumitron.request.send("led", "deregisterDevice", params);
 
 // Led manipulation
 var params = {
@@ -138,27 +138,24 @@ setTimeout(function() {
     }, 3000);
 }, 2000);
 
-var sheet = [
-    {"time": "500", "function": "on"},
-    {"time": "1000", "function": "setBrightness", "brightness": "50"},
-    {"time": "2000", "function": "setColour", "colour": "FF00FF"},
-    {"time": "3500", "function": "setBrightness", "brightness": "100"},
-    {"time": "5000", "function": "transitionToColour", "colour": "FFFF00", "pauseInterval": "3", "incrementInterval": "1"},
+// Led events
+var ledEvents = [
+    {"time": "500",   "deviceName": "Lagute-0001", "command": "on"},
+    {"time": "1000",  "deviceName": "Lagute-0001", "command": "setBrightness",      "params": {"brightness": "50"}},
+    {"time": "2000",  "deviceName": "Lagute-0001", "command": "setColour",          "params": {"colour": "FF00FF"}},
+    {"time": "3500",  "deviceName": "Lagute-0001", "command": "setBrightness",      "params": {"brightness": "100"}},
+    {"time": "5000",  "deviceName": "Lagute-0001", "command": "off"},
+    {"time": "7500",  "deviceName": "Lagute-0001", "command": "on"},
+    {"time": "10000", "deviceName": "Lagute-0001", "command": "setBrightness",      "params": {"brightness": "50"}},
+    {"time": "12000", "deviceName": "Lagute-0001", "command": "setColour",          "params": {"colour": "0000FF"}},
+    {"time": "13500", "deviceName": "Lagute-0001", "command": "setBrightness",      "params": {"brightness": "100"}},
+    {"time": "15000", "deviceName": "Lagute-0001", "command": "off"},
+    {"time": "5000",  "deviceName": "Lagute-0002", "command": "transitionToColour", "params": {"colour": "FFFF00", "pauseInterval": "3", "incrementInterval": "1"}},
 ]
 
 var params = {
-    "file": "C:/Lumitron/sheets/Lagute-0001.json",
-    "data": JSON.stringify(sheet)
+    "events": JSON.stringify(ledEvents)
 }
-lumitron.request.send("sheet", "save", params);
+lumitron.request.send("ledevents", "play", params);
 
-var params = {
-    "file": "C:/Lumitron/sheets/Lagute-0001.json"
-}
-lumitron.request.send("sheet", "load", params);
-
-var params = {
-    "file": "C:/Lumitron/sheets/Lagute-0001.json",
-    "device": "Lagute-0001"
-}
-lumitron.request.send("sheet", "read", params);
+lumitron.request.send("ledevents", "stop");

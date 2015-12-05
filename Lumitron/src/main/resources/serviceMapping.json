@@ -69,19 +69,15 @@
             "method": "resendResponse"
         }
     },
-    "sheet": {
+    "ledevents": {
         //Service Name
-        "load": {
-            "serviceClass": "com.lumitron.sheet.SheetService",
-            "method": "load"
+        "play": {
+            "serviceClass": "com.lumitron.ledevents.LedEventsService",
+            "method": "play"
         },
-        "save": {
-            "serviceClass": "com.lumitron.sheet.SheetService",
-            "method": "save"
-        },
-        "read": {
-            "serviceClass": "com.lumitron.sheet.SheetService",
-            "method": "read"
+        "stop": {
+            "serviceClass": "com.lumitron.ledevents.LedEventsService",
+            "method": "stop"
         }
     }
 }

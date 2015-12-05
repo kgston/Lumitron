@@ -1,11 +1,11 @@
-package com.lumitron.sheet;
+package com.lumitron.ledevents;
 
 import java.util.HashMap;
 
 import com.lumitron.network.LumitronService;
 import com.lumitron.network.RequestHandler;
 
-public class SheetService implements LumitronService {
+public class LedEventsService implements LumitronService {
     private HashMap<String, String> serviceRoute;
     private HashMap<String, String> params;
 
@@ -15,15 +15,11 @@ public class SheetService implements LumitronService {
         this.params = requestData.get("params");
     }
 
-    public void save() {
-        RequestHandler.send(serviceRoute.get("uuid"), SheetHandler.save(params));
+    public void play() {
+        RequestHandler.send(serviceRoute.get("uuid"), LedEventsHandler.play(params));
     }
 
-    public void load() {
-        RequestHandler.send(serviceRoute.get("uuid"), SheetHandler.load(params));
-    }
-
-    public void read() {
-        RequestHandler.send(serviceRoute.get("uuid"), SheetHandler.read(params));
+    public void stop() {
+        RequestHandler.send(serviceRoute.get("uuid"), LedEventsHandler.stop());
     }
 }
