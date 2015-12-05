@@ -42,6 +42,12 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.12'
     //Google GSON
     compile 'com.google.code.gson:gson:2.4'
+    //mp3transform for MP3 playback
+    compile files('libs/mp3transform.jar')
+    //MP3 SPI for getting MP3 metadata
+    compile files('libs/jl1.0.1.jar')
+    compile files('libs/mp3spi1.9.5.jar')
+    compile files('libs/tritonus_share.jar')
     //Servlet API
     println project.gradle.startParameter.taskNames
     //WebSocket API

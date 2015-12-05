@@ -210,30 +210,53 @@ button {
     width: 100%;
     background: linear-gradient(to right, #036A98, transparent);
 }
+.greyThinLine {
+    height: 1px;
+    width: 100%;
+    background-color: #444444;
+}
 
 /* Icons */
+.svg {
+    transition: fill 0.3s;
+}
+.svg:hover {
+    fill: #FFEA52;
+    filter: drop-shadow(0px 0px 1px #FFEA52 );
+    -webkit-filter: drop-shadow(0px 0px 1px #FFEA52);
+    transition: fill 0.3s;
+}
+.iconActive {
+    fill: #FFEA52 !important;
+    filter: drop-shadow(0px 0px 1px #FFEA52 ) !important;
+    -webkit-filter: drop-shadow(0px 0px 1px #FFEA52) !important;
+}
+.iconDisabled {
+    cursor: default !important;
+    fill: #444444 !important;
+    filter: drop-shadow(0px 0px 1px #444444 ) !important;
+    -webkit-filter: drop-shadow(0px 0px 1px #444444) !important;
+}
+.iconError {
+    fill: #FF4A26 !important;
+    filter: drop-shadow(0px 0px 1px #FF4A26 ) !important;
+    -webkit-filter: drop-shadow(0px 0px 1px #FF4A26) !important;
+}
 .iconLarge {
 	height: 40px;
-	fill: #FFEA52;
+	fill: white;
 	filter: drop-shadow(0px 0px 1px #FFEA52 );
     -webkit-filter: drop-shadow(0px 0px 1px #FFEA52 );
 }
-.iconLarge:hover {
-    transition: 0.2s;
-    transition-property: fill, filter, -webkit-filter;
-    fill: #FFEA52;
-    filter: drop-shadow(0px 0px 1.5px #FFEA52 );
-    -webkit-filter: drop-shadow(0px 0px 1.5px #FFFFFF );
-}
 .iconMedium {
     height: 35px;
-    fill: #FFEA52;
+    fill: white;
     filter: drop-shadow(0px 0px 1px #FFEA52 );
     -webkit-filter: drop-shadow(0px 0px 1px #FFEA52 );
 }
 .iconSmall {
     height: 30px;
-    fill: #FFEA52;
+    fill: white;
     filter: drop-shadow(0px 0px 1px #FFEA52 );
     -webkit-filter: drop-shadow(0px 0px 1px #FFEA52 );
 }
@@ -242,6 +265,7 @@ button {
     fill: white;
     filter: drop-shadow(0px 0px 1px white );
     -webkit-filter: drop-shadow(0px 0px 1px white );
+    transition: fill 0.3s;
 }
 .iconXXSmall {
     height: 20px;
@@ -269,13 +293,12 @@ button {
     display: flex;
     align-items: center;
 }
-
 #main {
     display: flex;
     
 }
 #controllersPanel {
-    flex-grow: 2;
+    flex: 3;
     display: flex;
     flex-direction: column;
 }
@@ -302,7 +325,64 @@ button {
     align-items: center;
 }
 #eventsPanel {
-    flex-grow: 3;
+    flex: 2;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+}
+#eventsTable {
+    margin-top: 10px;
+}
+#eventsControl {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+#musicPlayer {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+}
+#musicControl {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 30px;
+    background-color: #252525;
+}
+#musicTimeline {
+    margin-top: 20px;
+    height: 5px;
+}
+#playbackTimeline {
+    position: relative;
+    top: -3px;
+    width: 0%;
+    height: 1px;
+    background-color: #FFEA52;
+    transition: width 0.2s
+}
+#playbackControl {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+#playbackControlLeft {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: #757575;
+}
+#playbackControlLeft > div {
+    display: inherit;
+}
+.playbackControlIcon {
+    padding: 4px 4px;
+    padding-bottom: 0px;
+    margin: 0px 5px;
+    fill: #FFFFFF;
 }
 
 /* Forms */
@@ -337,4 +417,41 @@ button {
 }
 .controlPanel {
     flex-grow: 1;
+}
+
+@media all and (max-width: 1000px) {
+    #main {
+        flex-direction: column;
+    }
+    #eventsPanel {
+        margin-left: 0px;
+        display: flex;
+        flex-direction: column;
+    }
+    #controllersPanel {   
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* Stencil Table */
+.tableHeader {
+    font-family: 'Orbitron', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    padding: 5px 0px;
+}
+.st-tableHeaderColumns:first-of-type {
+    border-left: 3px solid #036A98;
+}
+.st-tableRowSet:hover {
+    border-bottom: lightgrey 1px solid;
+}
+.st-tableRowSet:hover .st-tableRowColumn:first-of-type {
+    border-left: 3px solid #FFEA52;
+}
+.st-tableRowSetSelected .tableRowColumn:first-of-type {
+    border-left: 3px solid #FFEA52;
 }

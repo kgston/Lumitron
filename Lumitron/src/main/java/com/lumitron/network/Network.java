@@ -19,7 +19,7 @@ public class Network {
         boolean isIpReachable = false;
 
         if (ipAddress == null) {
-            throw new LumitronException(Network.class.getSimpleName(), "0001", "The parameter IP address cannot be null");
+            throw new LumitronException(Network.class.getSimpleName(), "0001", "The IP address parameter cannot be null");
         }
 
         try {

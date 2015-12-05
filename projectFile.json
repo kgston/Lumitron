@@ -1,0 +1,19 @@
+{
+    "projectName": "",
+    "music": {
+        "file": ""
+    },
+    "controllers": {
+        "deviceName": "",
+        "macAddress": "",
+        "controller": ""
+    },
+    "events": [{
+        "time": "", //ms
+        "deviceName": "",
+        "command": "",
+        "params": {
+            
+        }
+    }]
+}

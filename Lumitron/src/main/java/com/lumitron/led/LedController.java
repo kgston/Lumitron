@@ -7,6 +7,24 @@ package com.lumitron.led;
  *
  */
 public interface LedController {
+    /**
+     * Return the model name of the controller
+     * @return The model name
+     */
+    public String getModel();
+    
+    /**
+     * Return the device name
+     * @return The device name
+     */
+    public String getName();
+    
+    /**
+     * Return the IP address of the controller
+     * @return the IP address
+     */
+    public String getIpAddress();
+    
     public boolean queryStatus() throws LedException;
     
     /**

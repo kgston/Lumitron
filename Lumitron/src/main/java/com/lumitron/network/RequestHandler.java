@@ -78,7 +78,7 @@ public class RequestHandler {
     public void openConnection(Session session) {
         //Register this connection in the queue
         try {
-            session.getBasicRemote().sendText(newResponse("Open connection", "receipt", null));
+            session.getBasicRemote().sendText(newResponse("Open connection", "receipt", null, true));
             AppSystem.log(this.getClass(), "Connection opened");
         } catch(IOException ioe) {
             AppSystem.log(this.getClass(), "Unable to send receipt for new connection");
@@ -281,7 +281,7 @@ public class RequestHandler {
      * @param isComplete Is the request completed? If so, forget the request after it is done.
      */
     private static void send(String uuid, String type, Object response, boolean isComplete) {
-        String jsonMsg = newResponse(uuid, type, response);
+        String jsonMsg = newResponse(uuid, type, response, isComplete);
         try {
             // Send response to session
             AppSystem.log(RequestHandler.class, "Returning response for <" + uuid + ">\n" + jsonMsg);
@@ -342,9 +342,10 @@ public class RequestHandler {
      * @param uuid The request UUID
      * @param type Type of response. Currently only "receipt", "response" and "error" is supported
      * @param responseDetails The details of the response or error. If there are not response, just pass null. Receipts do not send responses.
+     * @param isComplete Is the request completed? If so, forget the request after it is done.
      * @return The response formatted as JSON
      */
-    private static String newResponse(String uuid, String type, Object responseDetails) {
+    private static String newResponse(String uuid, String type, Object responseDetails, boolean isComplete) {
         HashMap<String, Object> response = new HashMap<>();
         
         //Populate data based on response type
@@ -359,6 +360,9 @@ public class RequestHandler {
                 response.put("uuid", uuid);
                 response.put("type", "response");
                 response.put("success", true);
+                if(!isComplete) {
+                    response.put("keepAlive", true);
+                }
                 if(responseDetails != null) {
                     response.put("response", responseDetails);
                 }
