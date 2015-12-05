@@ -64,9 +64,6 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
         }
         
         function displayAvaliableDevice(deviceDetails) {
-            if() {
-                
-            }
             avaliableDevices.push(deviceDetails);
             deviceDetails.deviceControllers = deviceControllers;
             avaliableDevicesStencil.render(deviceDetails, "append");
