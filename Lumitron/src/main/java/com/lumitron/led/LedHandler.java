@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class LedHandler {
     public static HashMap<String, Object> getDeviceControllers() {
-        // Get the available controller models
+        // Get the available device models
         ArrayList<HashMap<String, String>> deviceControllers = LedDeviceManager.getDeviceControllers();
 
         // Return the formatted response
@@ -16,7 +16,7 @@ public class LedHandler {
     }
 
     public static HashMap<String, Object> getRegisteredDevices() {
-        // Get the registered controllers
+        // Get the registered devices
         ArrayList<HashMap<String, String>> registeredDevices = LedDeviceManager.getRegisteredDevices();
 
         // Return the formatted response
@@ -48,8 +48,8 @@ public class LedHandler {
         // Get the parameters
         String name = params.get("name");
 
-        // Deregister the controller
-        LedDeviceManager.deregisterController(name);
+        // Deregister the device
+        LedDeviceManager.deregisterDevice(name);
         boolean isDeviceRegistered = LedDeviceManager.isDeviceRegistered(name);
 
         // Return the formatted response
@@ -70,7 +70,7 @@ public class LedHandler {
         commandParams.remove("device");
         commandParams.remove("command");
 
-        // Send the command to the controller
+        // Send the command to the device
         boolean isCommandSent = LedDeviceManager.sendCommand(device, command, commandParams);
 
         // Return the formatted response

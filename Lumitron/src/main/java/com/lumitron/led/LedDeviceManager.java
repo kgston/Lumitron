@@ -16,7 +16,7 @@ public class LedDeviceManager {
 
     /**
      * Get all available device models that can be registered
-     * @return A list of the controller model names
+     * @return A list of the device model names
      */
     public static ArrayList<HashMap<String, String>> getDeviceControllers() {
         TreeSet<String> models = new TreeSet<>();
@@ -32,10 +32,10 @@ public class LedDeviceManager {
 
     /**
      * Get all registered device information
-     * @return A list of the registered controller information ("name": {"model", "ipAddress"})
+     * @return A list of the registered devices information ("name": {"model", "ipAddress"})
      */
     public static ArrayList<HashMap<String, String>> getRegisteredDevices() {
-        ArrayList<HashMap<String, String>> controllersInfo = new ArrayList<>();
+        ArrayList<HashMap<String, String>> devicesInfo = new ArrayList<>();
 
         for (Entry<String, LedController> element : registeredDevices.entrySet()) {
             HashMap<String, String> deviceInfo = new HashMap<>();
@@ -43,23 +43,23 @@ public class LedDeviceManager {
             deviceInfo.put("name", element.getValue().getName());
             deviceInfo.put("ipAddress", element.getValue().getIpAddress());
 
-            controllersInfo.add(deviceInfo);
+            devicesInfo.add(deviceInfo);
         }
 
-        return controllersInfo;
+        return devicesInfo;
     }
 
     /**
      * Check whether a device is registered
-     * @param name The registered name of the controller
-     * @return True if the controller is registered, false otherwise
+     * @param name The registered name of the device
+     * @return True if the device is registered, false otherwise
      */
     public static boolean isDeviceRegistered(String name) {
         return registeredDevices.get(name) != null;
     }
 
     /**
-     * Register a device. If the controller is already registered, it is deregistered and registered again
+     * Register a device. If the device is already registered, it is deregistered and registered again
      * with the given information
      * @param model A valid device model (see getAvailableControllerModels())
      * @param name A name for the device to be registered
@@ -79,7 +79,7 @@ public class LedDeviceManager {
         }
 
         // Deregister the device if exists
-        deregisterController(name);
+        deregisterDevice(name);
 
         // Create a new controller
         LedController ledController = null;
@@ -105,7 +105,7 @@ public class LedDeviceManager {
      * Deregister a device
      * @param name The name of the device to deregister
      */
-    public static void deregisterController(String name) {
+    public static void deregisterDevice(String name) {
         registeredDevices.remove(name);
     }
 
@@ -126,7 +126,7 @@ public class LedDeviceManager {
             throw new LedException(LedDeviceManager.class.getSimpleName(), "0007", "The command must be specified");
         }
 
-        // Get the registered controller
+        // Get the registered device controller
         LedController controller = registeredDevices.get(deviceName);
 
         if (controller == null) {

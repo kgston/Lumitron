@@ -83,34 +83,40 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
         function toIPAddress(ipOctets) {
             return ipOctets[0] + "." + ipOctets[1] + "." + ipOctets[2] + "." + ipOctets[3];
         }
-    }
+    };
     
     var getDeviceControllers = function() {
         return lumitron.request.send("led", "getDeviceControllers").done(function(response) {
             deviceControllers = deviceControllers.concat(response.deviceControllers);
         });
-    }
-    
-    var panelClickBindings = function() {
-        
     };
+    
+    var getAvaliableControllers = function() {
+        var searchSettings = lumitron.opts.device.search;
+        search(searchSettings.fromIP, searchSettings.toIP);
+        
+        function panelClickBindings() {
+            
+        }
+    };
+    
     
     $(document).ready(function() {
         registeredDevicesStencil = stencil.define("registeredDevicesStencil", "#registeredDevices");
         avaliableDevicesStencil = stencil.define("avaliableDevicesStencil", "#avaliableDevices");
         
+        //Static bindings
+        $("#refreshAvaliableBtn").iconClick(getAvaliableControllers);
+        
         //Preload the avaliable device controllers
         getDeviceControllers().done(function() {
-            var searchSettings = lumitron.opts.device.search;
-            search(searchSettings.fromIP, searchSettings.toIP);
+            getAvaliableControllers();
         });
-        panelClickBindings();
     });
     
     return {
-        search: search,
         getDeviceControllers: getDeviceControllers,
-        // getAvaliableDevices: getAvaliableControllers,
+        getAvaliableDevices: getAvaliableControllers,
         // registerDevice: registerDevice,
         // unregisterDevice: unregisterDevice,
         // getRegisteredDevices: getRegisteredDevices,
