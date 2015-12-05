@@ -18,7 +18,7 @@ public class Network {
     public static boolean isIpReachable(String ipAddress, int timeout) throws LumitronException {
         boolean isIpReachable = false;
 
-        if (ipAddress == null) {
+        if (ipAddress == null || ipAddress.length() == 0) {
             throw new LumitronException(Network.class.getSimpleName(), "0001", "The IP address parameter cannot be null");
         }
 

@@ -12,6 +12,7 @@
     <script src="js/stencilTemplates.js"></script>
     <script src="js/Lumitron.js"></script>
     <script src="js/Request.js"></script>
+    <script src="js/Device.js"></script>
     <script src="js/Events.js"></script>
     <script src="js/Music.js"></script>
 </head>
@@ -30,124 +31,77 @@
         <div class="orangeGlowLine"></div>
     </div>
     <div id="main">
-        <div id="controllersPanel">
-            <h3 class="whiteGlowFont">Active</h2>
-            <div class="greyThinLine"></div>
-            <div id="registeredControllers" class="controllerPanel">
-                <div class="controller">
-                    <div class="deviceTitle">
-                        <h3 class="whiteGlowFont">Device 1</h3>
-                        <div class="deviceStatuses">
-                            <img class="connectionStrength svg iconXSmall pointer" src="css/icons/Entypo/progress-full.svg"/>
-                            <img id="icon" class="svg iconXSmall pointer" src="css/icons/Entypo/minus.svg"/>
-                        </div>
-                    </div>
-                    <div class="infoPanel">
-                        <div class="infoLabels">
-                            <span>IP Address</span>
-                            <span>State</span>
-                            <span>Brightness</span>
-                            <span>Colour</span>
-                        </div>
-                        <div class="infoValues">
-                            <span>10.10.1.1</span>
-                            <select>
-                                <option value="off">Off</option>
-                                <option value="on">On</option>
-                            </select>
-                            <input type="text" value="30"/>
-                            <input type="text" value="#FFFFFF"/>
-                        </div>
-                    </div>
-                    <div class="controlPanel">
-                    </div>
-                    <div class="blueGlowRightLine"></div>
-                </div>
-                <div class="controller">
-                    <div class="deviceTitle">
-                        <h3 class="whiteGlowFont">Device 2</h3>
-                        <div class="deviceStatuses">
-                            <img class="connectionStrength svg iconXSmall pointer" src="css/icons/Entypo/progress-one.svg"/>
-                            <img class="svg iconXSmall pointer" src="css/icons/Entypo/minus.svg"/>
-                        </div>
-                    </div>
-                    <div class="infoPanel">
-                        <div class="infoLabels">
-                            <span>IP Address</span>
-                            <span>State</span>
-                            <span>Brightness</span>
-                            <span>Colour</span>
-                        </div>
-                        <div class="infoValues">
-                            <span>10.10.1.1</span>
-                            <span>On</span>
-                            <span>30</span>
-                            <span>#FFFFFF</span>
-                        </div>
-                    </div>
-                    <div class="controlPanel">
-                        
-                    </div>
-                    <div class="blueGlowRightLine"></div>
-                </div>
-                <div class="controller">
-                    <div class="deviceTitle">
-                        <h3 class="whiteGlowFont">Device 2</h3>
-                        <div class="deviceStatuses">
-                            <img class="connectionStrength svg iconXSmall pointer" src="css/icons/Entypo/progress-one.svg"/>
-                            <img class="svg iconXSmall pointer" src="css/icons/Entypo/minus.svg"/>
-                        </div>
-                    </div>
-                    <div class="infoPanel">
-                        <div class="infoLabels">
-                            <span>IP Address</span>
-                            <span>State</span>
-                            <span>Brightness</span>
-                            <span>Colour</span>
-                        </div>
-                        <div class="infoValues">
-                            <span>10.10.1.1</span>
-                            <span>On</span>
-                            <span>30</span>
-                            <span>#FFFFFF</span>
-                        </div>
-                    </div>
-                    <div class="controlPanel">
-                        
-                    </div>
-                    <div class="blueGlowRightLine"></div>
-                </div>
+        <div id="devicesPanel">
+            <div class="subHeader">
+                <h3 class="whiteGlowFont">Active</h3>
             </div>
-            <h3 class="whiteGlowFont">Inactive</h2>
             <div class="greyThinLine"></div>
-            <div id="unregisteredControllers">
-                <div class="controller">
-                    <div class="deviceTitle">
-                        <h3 class="whiteGlowFont">IP Address</h3>
-                        <div class="deviceStatuses">
-                            <img class="connectionStrength svg iconXXSmall pointer" src="css/icons/Entypo/cycle.svg"/>
-                            <img id="icon" class="svg iconXSmall pointer" src="css/icons/Entypo/plus.svg"/>
+            <div id="registeredDevices" class="devicesPanel">
+                <stencil id="registeredDevicesStencil">
+                    <div class="device">
+                        <div class="deviceTitle">
+                            <h3 class="whiteGlowFont">Device 1</h3>
+                            <div class="deviceStatuses">
+                                <img class="connectionStrength svg iconXSmall pointer" src="css/icons/Entypo/progress-full.svg"/>
+                                <img id="icon" class="svg iconXSmall pointer" src="css/icons/Entypo/minus.svg"/>
+                            </div>
                         </div>
-                    </div>
-                    <div class="infoPanel">
-                        <div class="infoLabels">
-                            <span>MAC Address</span>
-                            <span>Controller Type</span>
-                            <span>Device Name</span>
+                        <div class="infoPanel">
+                            <div class="infoLabels">
+                                <span>IP Address</span>
+                                <span>State</span>
+                                <span>Brightness</span>
+                                <span>Colour</span>
+                            </div>
+                            <div class="infoValues">
+                                <span>10.10.1.1</span>
+                                <select>
+                                    <option value="off">Off</option>
+                                    <option value="on">On</option>
+                                </select>
+                                <input type="text" value="30"/>
+                                <input type="text" value="#FFFFFF"/>
+                            </div>
                         </div>
-                        <div class="infoValues">
-                            <span>ff:ff:ff:ff:ff:ff:ff</span>
-                            <select>
-                                <option value="off">Controller 1</option>
-                                <option value="on">Controller 2</option>
-                            </select>
-                            <input type="text" value="" placeholder="My Device"/>
+                        <div class="controlPanel">
                         </div>
+                        <div class="blueGlowRightLine"></div>
                     </div>
-                    <div class="controlPanel">
+                </stencil>
+            </div>
+            <div class="subHeader">
+                <h3 class="whiteGlowFont">Inactive</h3>
+                <img id="refreshAvaliableBtn" class="connectionStrength svg iconXXSmall pointer" src="css/icons/Entypo/cycle.svg"/>
+            </div>
+            <div class="greyThinLine"></div>
+            <div id="avaliableDevices" class="devicesPanel">
+                <stencil id="avaliableDevicesStencil" data-childStencil="deviceControllers">
+                    <div class="device">
+                        <div class="deviceTitle">
+                            <h3 class="whiteGlowFont">{{ipAddress}}</h3>
+                            <div class="deviceStatuses">
+                                <img id="icon" class="svg iconXSmall pointer" src="css/icons/Entypo/plus.svg"/>
+                            </div>
+                        </div>
+                        <div class="infoPanel">
+                            <div class="infoLabels">
+                                <span>Device Name</span>
+                                <span>MAC Add.</span>
+                                <span>Model</span>
+                            </div>
+                            <div class="infoValues">
+                                <input type="text" value="" placeholder="My Device"/>
+                                <span>{{macAddress}}</span>
+                                <select id="deviceControllers">
+                                    <option value="{{name}}" {{options}}>{{name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="controlPanel">
+                        </div>
+                        <div class="blueGlowRightLine"></div>
                     </div>
-                    <div class="blueGlowRightLine"></div>
-                </div>
+                </stencil>
             </div>
         </div>
         <div id="eventsPanel">
@@ -167,15 +121,9 @@
             <div id="playbackTimeline" class="orangeGlowLine pointer"></div>
             <div id="playbackControl">
                 <div id="playbackControlLeft">
-                    <div>
-                        <img id="play" class="svg iconDisabled playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-play.svg"/>
-                    </div>
-                    <div>
-                        <img id="pause" class="svg iconDisabled playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-paus.svg"/>
-                    </div>
-                    <div>
-                        <img id="stop" class="svg iconDisabled playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-stop.svg"/>
-                    </div>
+                    <img id="play" class="svg iconDisabled playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-play.svg"/>
+                    <img id="pause" class="svg iconDisabled playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-paus.svg"/>
+                    <img id="stop" class="svg iconDisabled playbackControlIcon iconXXSmall pointer" src="css/icons/Entypo/controller-stop.svg"/>
                     <div class="playbackControlIcon">
                         <span id="currentPlaybackTime">0:00</span><span> / </span><span id="totalPlaybackTime">0:00</span>
                     </div>

@@ -1,13 +1,16 @@
 var lumitron = lumitron || {};
 
-lumitron.request = (function() {
+lumitron.request = $.extend(true, lumitron.request || {}, (function() {
 	//Private vars
 	var serverURL = "ws://localhost:8080/Lumitron/ws/request";
 	var socket = null;
     
     //UI vars
     var serverStateUI;
-	
+    
+	//Buffer to hold requests while socket is not yet open
+    var pendingRequests = [];
+    
 	//Container to map a request to a response and all related info
 	var pendingResponses = {};
     
@@ -41,7 +44,7 @@ lumitron.request = (function() {
                 $("#serverState").off().click(lumitron.request.open);
                 break;
         }
-        lumitron.inlineSVG();
+        lumitron.ui.inlineSVG();
     };
     
 	//Starts a new connection to the server. 
@@ -55,6 +58,12 @@ lumitron.request = (function() {
 				Object.keys(pendingResponses).forEach(function(responseUUID) {
 					send("request", "resend", {uuid: responseUUID}, false);
 				});
+                //Sends out any waiting requests
+                pendingRequests.forEach(function(request) {
+                    //Send request
+                    socket.send(JSON.stringify(request));
+                });
+                pendingRequests = [];
 			}
 			socket.onclose = function(event) {
 				setServerState("disconnected");
@@ -137,7 +146,7 @@ lumitron.request = (function() {
 			
 			//FOR TESTING USE
 			deferred.promise().always(function() {
-				$("#pushedItems").append(event.data + "</br>");
+				$("#pushedItems").text(event.data);
 			});
 			
 			//Store request
@@ -146,8 +155,13 @@ lumitron.request = (function() {
 				deferred: deferred,
 				isAcknowledged: false
 			}
-			//Send request
-			socket.send(JSON.stringify(request));
+            
+            if(socket.readyState != 1) {
+                pendingRequests.push(request);
+            } else {
+                //Send request
+			    socket.send(JSON.stringify(request));
+            }
 			
 			//Return a promise to the caller
 			return deferred.promise();
@@ -162,4 +176,4 @@ lumitron.request = (function() {
 		close: close,
 		send: send
 	}
-})();
+})());

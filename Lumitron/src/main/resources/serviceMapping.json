@@ -3,22 +3,22 @@
     //Domain Name
     "led": {
         //Service Name
-        "getAvailableControllerModels": {
+        "getDeviceControllers": {
             "serviceClass": "com.lumitron.led.LedService", //Fully qualified class name
-            "method": "getAvailableControllerModels" //method name, case sensitive
+            "method": "getDeviceControllers" //method name, case sensitive
         },
         //Service Name
-        "getRegisteredControllers": {
+        "getRegisteredDevices": {
             "serviceClass": "com.lumitron.led.LedService", //Fully qualified class name
-            "method": "getRegisteredControllers" //method name, case sensitive
+            "method": "getRegisteredDevices" //method name, case sensitive
         },
-        "registerController": {
+        "registerDevice": {
             "serviceClass": "com.lumitron.led.LedService", //Fully qualified class name
-            "method": "registerController" //method name, case sensitive
+            "method": "registerDevice" //method name, case sensitive
         },
-        "deregisterController": {
+        "deregisterDevice": {
             "serviceClass": "com.lumitron.led.LedService", //Fully qualified class name
-            "method": "deregisterController" //method name, case sensitive
+            "method": "deregisterDevice" //method name, case sensitive
         },
         "sendCommand": {
             "serviceClass": "com.lumitron.led.LedService", //Fully qualified class name
