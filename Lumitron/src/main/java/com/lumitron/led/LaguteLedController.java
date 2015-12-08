@@ -37,21 +37,12 @@ public class LaguteLedController extends GenericLedController {
     }
     
     /* (non-Javadoc)
-     * @see com.lumitron.led.LedController#queryStatus()
-     */
-    @Override
-    public boolean queryStatus() throws LedException {
-        on();
-        setColour("0D0D0D");
-        return true;
-    }
-    
-    /* (non-Javadoc)
      * @see com.lumitron.led.LedController#on()
      */
     @Override
     public void on() throws LedException {
         AppSystem.log(this.getClass(), "Turning " + deviceName + " on");
+        currentState = "on";
         send(HEADER + COMMAND_ON + COLOUR_WHITE + FOOTER, false);
     }
 
@@ -61,6 +52,7 @@ public class LaguteLedController extends GenericLedController {
     @Override
     public void off() throws LedException {
         AppSystem.log(this.getClass(), "Turning " + deviceName + " off");
+        currentState = "off";
         send(HEADER + COMMAND_OFF + COLOUR_WHITE + FOOTER, false);
     }
 
@@ -86,6 +78,7 @@ public class LaguteLedController extends GenericLedController {
             throw new LedException(this.getClass().getSimpleName(), "0009", "Device name not specified");
         }
         AppSystem.log(this.getClass(), "Setting " + deviceName + " brightness to: " + brightnessLevel + "%");
+        currentBrightness = brightnessLevel;
         String levelHex = Integer.toHexString(Integer.parseInt(brightnessLevel));
         if(levelHex.length() == 1) {
             levelHex = "0" + levelHex;

@@ -90,12 +90,12 @@ public class LedDeviceManager {
             ledController = (LedController) ledControllerConstructor.newInstance(name, ipAddress);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new LedException(LedDeviceManager.class.getSimpleName(), "0004", "Led controller registration failed (unknown error occurred)");
+            throw new LedException(LedDeviceManager.class.getSimpleName(), "0004", "Led device registration failed (unknown error occurred)");
         }
 
         // Register the new controller
         if (ledController == null) {
-            throw new LedException(LedDeviceManager.class.getSimpleName(), "0005", "Led controller registration failed");
+            throw new LedException(LedDeviceManager.class.getSimpleName(), "0005", "Led device registration failed");
         }
 
         registeredDevices.put(name, ledController);
@@ -103,10 +103,25 @@ public class LedDeviceManager {
 
     /**
      * Deregister a device
-     * @param name The name of the device to deregister
+     * @param deviceName The name of the device to deregister
      */
-    public static void deregisterDevice(String name) {
-        registeredDevices.remove(name);
+    public static void deregisterDevice(String deviceName) {
+        registeredDevices.remove(deviceName);
+    }
+    
+    /**
+     * Gets the last known state of the device
+     * @param deviceName The name of the device to get the state of
+     */
+    public static HashMap<String, Object> getState(String deviceName) {
+        // Get the registered device controller
+        LedController controller = registeredDevices.get(deviceName);
+        
+        if (controller == null) {
+            return null;
+        } else {
+            return controller.getState();
+        }
     }
 
     /**
@@ -135,9 +150,6 @@ public class LedDeviceManager {
 
         // Execute the command
         switch (command) {
-            case "queryStatus":
-                controller.queryStatus();
-                break;
             case "on":
                 controller.on();
                 break;

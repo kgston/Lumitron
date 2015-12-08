@@ -47,12 +47,12 @@ var params = {
     "name": "Lagute-0001",
     "ipAddress": "192.168.1.3"
 }
-lumitron.request.send("led", "registerController", params);
+lumitron.request.send("led", "registerDevice", params);
 
 var params = {
     "name": "Lagute-0001",
 }
-lumitron.request.send("led", "deregisterController", params);
+lumitron.request.send("led", "deregisterDevice", params);
 
 // Led manipulation
 var params = {

@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.Inet4Address;
 import java.net.SocketException;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -24,8 +25,9 @@ public abstract class GenericLedController implements LedController {
     protected final int port;
     protected DatagramSocket connection;
     
+    protected String currentState = "";
+    protected String currentBrightness = "";
     protected String currentHexColour = "";
-    
     
     /**
      * Abstracted implementation of a LED controller for use with subclasses
@@ -40,11 +42,6 @@ public abstract class GenericLedController implements LedController {
         this.port = port;
         
         connect();
-        if(queryStatus()) {
-            AppSystem.log(this.getClass(), "Connected!");
-        } else {
-            AppSystem.log(this.getClass(), "No response from device");
-        }
     }
     
     /**
@@ -61,6 +58,18 @@ public abstract class GenericLedController implements LedController {
     @Override
     public String getIpAddress() {
         return ipAddress;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HashMap<String, Object> getState() {
+        HashMap<String, Object> state = new HashMap<>();
+        state.put("state", currentState);
+        state.put("brightness", currentBrightness);
+        state.put("colour", currentHexColour);
+        return state;
     }
     
     /* (non-Javadoc)

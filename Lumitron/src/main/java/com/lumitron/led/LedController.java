@@ -1,5 +1,6 @@
 package com.lumitron.led;
 
+import java.util.HashMap;
 
 /**
  * Defines the interface of a LED controller
@@ -8,24 +9,28 @@ package com.lumitron.led;
  */
 public interface LedController {
     /**
-     * Return the model name of the controller
+     * Returns the model name of the device
      * @return The model name
      */
     public String getModel();
     
     /**
-     * Return the device name
+     * Returns the device name
      * @return The device name
      */
     public String getName();
     
     /**
-     * Return the IP address of the controller
+     * Returns the IP address of the device
      * @return the IP address
      */
     public String getIpAddress();
     
-    public boolean queryStatus() throws LedException;
+    /**
+     * Returns the last known state of the device
+     * @return the IP address
+     */
+    public HashMap<String, Object> getState() throws LedException;
     
     /**
      * Turns the lights on
@@ -40,13 +45,13 @@ public interface LedController {
     public void off() throws LedException;
     
     /**
-     * Connects to the controller and opens a long-lived connection
+     * Connects to the device and opens a long-lived connection
      * @throws LedException
      */
     public void connect() throws LedException;
     
     /**
-     * Disconnects from the controller and closes the connection to the controller
+     * Disconnects from the device and closes the connection to the device
      * @throws LedException
      */
     public void disconnect() throws LedException;

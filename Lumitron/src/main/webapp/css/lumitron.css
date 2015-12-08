@@ -140,6 +140,10 @@ select:focus {
     padding-left: 0px;
     outline: none; 
 }
+select.error {
+    border-left: #dd362f 3px solid;
+    padding-left: 0px;
+}
 input {
     background-color: #252525;
     border: none;
@@ -162,6 +166,11 @@ input:hover {
 input:focus {
     outline: none; 
     border-left: #FFEA52 3px solid;
+    padding-left: 4px;
+}
+input.error {
+    outline: none;
+    border-left: #dd362f 3px solid;
     padding-left: 4px;
 }
 /* Buttons */

@@ -24,16 +24,7 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
         
         do {
             var currentIP = toIPAddress(fromIPOctets);
-            checkIpReachable(currentIP).done(function(response) {
-                if(response.isAlive) {
-                    getMacAddress(response.ipAddress).done(function(response) {
-                        //Add device to avaliable list
-                        if(response) {
-                            displayAvaliableDevice(response);
-                        }
-                    });
-                }
-            });
+            checkIpReachable(currentIP).done(setDevice);
         } while(++fromIPOctets[3] <= toIPOctets[3])
         
         function checkIpReachable(ipAddress) {
@@ -58,6 +49,26 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
             }
         }
         
+        function setDevice(response) {
+            if(response.isAlive) {
+                var isRegistered = !registeredDevices.every(function(registeredDevice) {
+                    if(registeredDevice.ipAddress === response.ipAddress) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
+                if(!isRegistered) {
+                    getMacAddress(response.ipAddress).done(function(response) {
+                        //Add device to avaliable list
+                        if(response) {
+                            displayAvaliableDevice(response);
+                        }
+                    });
+                }
+            }
+        }
+        
         function getMacAddress(ipAddress) {
             var params = {"ipAddress": ipAddress};
             return lumitron.request.send("network", "getMacAddress", params);
@@ -66,7 +77,14 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
         function displayAvaliableDevice(deviceDetails) {
             avaliableDevices.push(deviceDetails);
             deviceDetails.deviceControllers = deviceControllers;
-            avaliableDevicesStencil.render(deviceDetails, "append");
+            var $renderedPanel = avaliableDevicesStencil.render(deviceDetails, "fragment");
+            
+            //Set click bindings for the device
+            $renderedPanel.find(".registerDeviceBtn").iconClick(function() {
+                (registerDevice.bind(this))(deviceDetails);
+            });
+            $("#avaliableDevices").append($renderedPanel);
+            
             lumitron.ui.inlineSVG();
         }
         
@@ -91,36 +109,196 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
         });
     };
     
-    var getAvaliableControllers = function() {
+    var getAvaliableDevices = function() {
         var searchSettings = lumitron.opts.device.search;
+        avaliableDevicesStencil.clear();
         search(searchSettings.fromIP, searchSettings.toIP);
-        
-        function panelClickBindings() {
-            
-        }
     };
     
+    var registerDevice = function(deviceDetails) {
+        var $avaliableDevicePanel = this.closest(".device");
+        var name = $avaliableDevicePanel.find(".deviceName").val();
+        var model = $avaliableDevicePanel.find(".deviceModel").val();
+        var params = {
+            "name": name,
+            "model": model,
+            "ipAddress": deviceDetails.ipAddress
+        };
+        return lumitron.request.send("led", "registerDevice", params)
+            .done(function(response) {
+                if(response.isRegistered) {
+                    deviceDetails.name = $avaliableDevicePanel.find(".deviceName").val();
+                    $avaliableDevicePanel.remove();
+                    
+                    var registeredDevice = newRegisteredDevice(
+                        deviceDetails.ipAddress, 
+                        name, 
+                        model
+                    );
+                    registeredDevice.update();
+                    registeredDevices.push(registeredDevice);
+                }
+            });
+    };
+    
+    var getRegisteredDevices = function() {
+        lumitron.request.send("led", "getRegisteredDevices")
+            .done(function(response) {
+                registeredDevices.forEach(function(registeredDevice) {
+                    registeredDevice.clearHeartbeat();
+                });
+                registeredDevices = [];
+                registeredDevicesStencil.clear();
+                response.registeredDevices.forEach(function(deviceDetails) {
+                    var registeredDevice = newRegisteredDevice(
+                        deviceDetails.ipAddress, 
+                        deviceDetails.name, 
+                        deviceDetails.model
+                    );
+                    registeredDevice.update();
+                    registeredDevices.push(registeredDevice);
+                });
+            });
+    };
+    
+    function newRegisteredDevice(ipAddress, name, model) {
+        return {
+            ipAddress: ipAddress,
+            name: name,
+            model: model,
+            draw: function() {
+                var $devicePanel = registeredDevicesStencil.render(this, "fragment");
+                var isFirstDraw = this.panel == null;
+                this.panel = $devicePanel;
+                this.applyPanelBindings();
+                if(isFirstDraw) { //First draw
+                    $("#registeredDevices").append($devicePanel);
+                    lumitron.ui.inlineSVG();
+                    this.heartbeat(); //Start heartbeat listener
+                } else {
+                    this.panel.replaceWith($devicePanel);
+                }
+                return this;
+            },
+            update: function() {
+                var params = {
+                    "device": this.name
+                };
+                return lumitron.request.send("led", "getState", params)
+                    .done(function(response) {
+                        this.state = response.state;
+                        this.brightness = response.brightness;
+                        this.colour = response.colour;
+                        this.draw();
+                    }.bind(this));
+            },
+            applyPanelBindings: function() {
+                var name = this.name;
+                var panel = this.panel;
+                var clearHeartbeat = this.clearHeartbeat.bind(this);
+                panel.find(".deregister").iconClick(function() {
+                    var params = {
+                        "name": name
+                    };
+                    lumitron.request.send("led", "deregisterDevice", params)
+                        .done(function(response) {
+                            if(!response.isRegistered) {
+                                clearHeartbeat();
+                                panel.remove();
+                                registeredDevices.every(function(registeredDevice, index) {
+                                    if(registeredDevice.name == name) {
+                                        registeredDevices.splice(index, 1);
+                                        return false;
+                                    } else {
+                                        return true;
+                                    }
+                                });
+                            }
+                        });
+                });
+                panel.find(".state").change(function() {
+                    var params = {
+                        "device": name,
+                        "command": $(this).val()
+                    };
+                    lumitron.request.send("led", "sendCommand", params);
+                });
+                panel.find(".brightness").inputComplete(function() {
+                    var params = {
+                        "device": name,
+                        "command": "setBrightness",
+                        "brightness": $(this).val()
+                    };
+                    lumitron.request.send("led", "sendCommand", params);
+                });
+                panel.find(".colour").inputComplete(function() {
+                    var params = {
+                        "device": name,
+                        "command": "setColour",
+                        "colour": $(this).val()
+                    };
+                    lumitron.request.send("led", "sendCommand", params);
+                });
+            },
+            heartbeat: function() {
+                if(this.heartbeatIntervalId) {
+                    return;
+                }
+                
+                var searchSettings = lumitron.opts.device.search;
+                var heartbeatSettings = lumitron.opts.device.heartbeat;
+                this.heartbeatIntervalId = setInterval(function() {
+                    var params = {
+                        "ipAddress": this.ipAddress,
+                        "timeout": searchSettings.timeout
+                    };
+                    lumitron.request.send("network", "isIpReachable", params)
+                        .done(function(response) {
+                            var statusSrc = {
+                                3: "css/icons/Entypo/progress-full.svg",
+                                2: "css/icons/Entypo/progress-two.svg",
+                                1: "css/icons/Entypo/progress-one.svg",
+                                0: "css/icons/Entypo/progress-empty.svg"
+                            };
+                            if(response.isAlive) {
+                                this.connectionStrength = 3;
+                                this.panel.find(".connectionStrength").changeSVGSrc(statusSrc[this.connectionStrength.toString()]);
+                            } else {
+                                this.connectionStrength--;
+                                this.panel.find(".connectionStrength").changeSVGSrc(
+                                    statusSrc[this.connectionStrength.toString()] || "0");
+                            }
+                        }.bind(this));
+                }.bind(this), heartbeatSettings.intervalLength);
+            },
+            clearHeartbeat: function() {
+                clearInterval(this.heartbeatIntervalId);
+            }
+        };
+    }
+    
+    var init = function() {
+        //Static bindings
+        $("#refreshAvaliableBtn").iconClick(getAvaliableDevices);
+        $("#refreshRegisteredBtn").iconClick(getRegisteredDevices);
+        
+        //Preload the avaliable device controllers
+        getDeviceControllers().done(function() {
+            getAvaliableDevices();
+        });
+    };
     
     $(document).ready(function() {
         registeredDevicesStencil = stencil.define("registeredDevicesStencil", "#registeredDevices");
         avaliableDevicesStencil = stencil.define("avaliableDevicesStencil", "#avaliableDevices");
-        
-        //Static bindings
-        $("#refreshAvaliableBtn").iconClick(getAvaliableControllers);
-        
-        //Preload the avaliable device controllers
-        getDeviceControllers().done(function() {
-            getAvaliableControllers();
-        });
     });
     
     return {
+        init: init,
+        search: search,
         getDeviceControllers: getDeviceControllers,
-        getAvaliableDevices: getAvaliableControllers,
-        // registerDevice: registerDevice,
-        // unregisterDevice: unregisterDevice,
-        // getRegisteredDevices: getRegisteredDevices,
-        // setStethoscope: setStethoscope,
-        // sendCommand: sendCommand
+        getAvaliableDevices: getAvaliableDevices,
+        registerDevice: registerDevice,
+        getRegisteredDevices: getRegisteredDevices
     };
 })());

@@ -17,7 +17,6 @@ lumitron.request = $.extend(true, lumitron.request || {}, (function() {
     //First run code
     $(document).ready(function() {
         serverStateUI = stencil.define("serverStatusStencil");
-        setServerState("loading");
     });
 	
 	//Private functions
@@ -64,11 +63,11 @@ lumitron.request = $.extend(true, lumitron.request || {}, (function() {
                     socket.send(JSON.stringify(request));
                 });
                 pendingRequests = [];
-			}
+			};
 			socket.onclose = function(event) {
 				setServerState("disconnected");
 				socket = null;
-			}
+			};
 			socket.onmessage = function(event) {
 				var response = JSON.parse(event.data);
 				var uuid = response.uuid;
@@ -99,7 +98,7 @@ lumitron.request = $.extend(true, lumitron.request || {}, (function() {
 				} else {
 					console.log("Unknown response type!");
 				}
-			}
+			};
 		} else {
 			console.log("Connection is already started");
 		}
@@ -124,56 +123,58 @@ lumitron.request = $.extend(true, lumitron.request || {}, (function() {
 	//								 promise.always(callback) for all cases, promise.progress(callback) for multiple responses
 	var send = function(domainName, serviceName, params) {
 		params = params || null;
-		if(socket != null) {
-			//Check if params is of right format
-			if(typeof params !== "object") {
-				console.log("Unable to send request with an invalid params format");
-				return;
-			}
-			
-			//Create the request object
-			var request = {
-				serviceRoute: {
-					uuid: lumitron.getUUID(),
-					domain: domainName,
-					service: serviceName
-				},
-				params: params
-			}
-			
-			//Create the promise for the callback
-			var deferred = jQuery.Deferred();
-			
-			//FOR TESTING USE
-			deferred.promise().always(function() {
-				$("#pushedItems").text(event.data);
-			});
-			
-			//Store request
-			pendingResponses[request.serviceRoute.uuid] = {
-				request: request,
-				deferred: deferred,
-				isAcknowledged: false
-			}
-            
-            if(socket.readyState != 1) {
-                pendingRequests.push(request);
-            } else {
-                //Send request
-			    socket.send(JSON.stringify(request));
-            }
-			
-			//Return a promise to the caller
-			return deferred.promise();
-		} else {
-			console.log("Connection isn't started");
-		}
-	}
+		//Check if params is of right format
+        if(typeof params !== "object") {
+            console.log("Unable to send request with an invalid params format");
+            return;
+        }
+        
+        //Create the request object
+        var request = {
+            serviceRoute: {
+                uuid: lumitron.getUUID(),
+                domain: domainName,
+                service: serviceName
+            },
+            params: params
+        };
+        
+        //Create the promise for the callback
+        var deferred = jQuery.Deferred();
+        
+        //FOR TESTING USE
+        deferred.promise().always(function() {
+            $("#pushedItems").text(event.data);
+        });
+        
+        //Store request
+        pendingResponses[request.serviceRoute.uuid] = {
+            request: request,
+            deferred: deferred,
+            isAcknowledged: false
+        };
+        
+        if(socket == null || socket.readyState != 1) {
+            pendingRequests.push(request);
+        } else {
+            //Send request
+            socket.send(JSON.stringify(request));
+        }
+        
+        //Return a promise to the caller
+        return deferred.promise();
+	};
+    
+    var init = function() {
+        setServerState("loading");
+        open();
+    };
 	
 	//Public APIs
 	return {
-		open: open,
+		init: init,
+        open: open,
 		close: close,
 		send: send
-	}
+	};
 })());

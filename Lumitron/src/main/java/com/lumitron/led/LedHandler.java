@@ -59,6 +59,14 @@ public class LedHandler {
 
         return response;
     }
+    
+    public static HashMap<String, Object> getState(HashMap<String, String> params) {
+        // Get the parameters
+        String name = params.get("device");
+
+        // Gets the state of the device
+        return LedDeviceManager.getState(name);
+    }
 
     public static HashMap<String, Object> sendCommand(HashMap<String, String> params) {
         // Get the parameters

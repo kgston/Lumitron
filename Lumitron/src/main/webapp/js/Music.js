@@ -53,11 +53,15 @@ lumitron.music = $.extend(true, lumitron.music || {}, (function() {
     };
     
     $(document).ready(function() {
-        load();
     });
+    
+    var init = function() {
+        load();
+    };
     
     //Public APIs
     return {
+        init: init,
         load: load,
         play: play,
         pause: pause,
