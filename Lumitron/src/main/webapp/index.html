@@ -34,33 +34,36 @@
         <div id="devicesPanel">
             <div class="subHeader">
                 <h3 class="whiteGlowFont">Active</h3>
+                <img id="refreshRegisteredBtn" class="svg iconXXSmall pointer" src="css/icons/Entypo/cycle.svg"/>
             </div>
             <div class="greyThinLine"></div>
             <div id="registeredDevices" class="devicesPanel">
                 <stencil id="registeredDevicesStencil">
                     <div class="device">
                         <div class="deviceTitle">
-                            <h3 class="whiteGlowFont">Device 1</h3>
+                            <h3 class="whiteGlowFont deviceName">{{name}}</h3>
                             <div class="deviceStatuses">
                                 <img class="connectionStrength svg iconXSmall pointer" src="css/icons/Entypo/progress-full.svg"/>
-                                <img id="icon" class="svg iconXSmall pointer" src="css/icons/Entypo/minus.svg"/>
+                                <img class="deregister svg iconXSmall pointer" src="css/icons/Entypo/minus.svg"/>
                             </div>
                         </div>
                         <div class="infoPanel">
                             <div class="infoLabels">
+                                <span>Model</span>
                                 <span>IP Address</span>
                                 <span>State</span>
                                 <span>Brightness</span>
                                 <span>Colour</span>
                             </div>
                             <div class="infoValues">
-                                <span>10.10.1.1</span>
-                                <select>
+                                <span>{{model}}</span>
+                                <span>{{ipAddress}}</span>
+                                <select class="state" data-stencilSelector="state">
                                     <option value="off">Off</option>
                                     <option value="on">On</option>
                                 </select>
-                                <input type="text" value="30"/>
-                                <input type="text" value="#FFFFFF"/>
+                                <input class="brightness" type="text" value="{{brightness}}" placeholder="Unknown"/>
+                                <input class="colour" type="text" value="{{colour}}" placeholder="Unknown"/>
                             </div>
                         </div>
                         <div class="controlPanel">
@@ -71,16 +74,16 @@
             </div>
             <div class="subHeader">
                 <h3 class="whiteGlowFont">Inactive</h3>
-                <img id="refreshAvaliableBtn" class="connectionStrength svg iconXXSmall pointer" src="css/icons/Entypo/cycle.svg"/>
+                <img id="refreshAvaliableBtn" class="svg iconXXSmall pointer" src="css/icons/Entypo/cycle.svg"/>
             </div>
             <div class="greyThinLine"></div>
             <div id="avaliableDevices" class="devicesPanel">
                 <stencil id="avaliableDevicesStencil" data-childStencil="deviceControllers">
                     <div class="device">
                         <div class="deviceTitle">
-                            <h3 class="whiteGlowFont">{{ipAddress}}</h3>
+                            <h3 class="whiteGlowFont deviceIP">{{ipAddress}}</h3>
                             <div class="deviceStatuses">
-                                <img id="icon" class="svg iconXSmall pointer" src="css/icons/Entypo/plus.svg"/>
+                                <img class="svg iconXSmall pointer registerDeviceBtn" src="css/icons/Entypo/plus.svg"/>
                             </div>
                         </div>
                         <div class="infoPanel">
@@ -90,9 +93,9 @@
                                 <span>Model</span>
                             </div>
                             <div class="infoValues">
-                                <input type="text" value="" placeholder="My Device"/>
+                                <input class="deviceName" type="text" value="" placeholder="My Device"/>
                                 <span>{{macAddress}}</span>
-                                <select id="deviceControllers">
+                                <select id="deviceControllers" class="deviceModel">
                                     <option value="{{name}}" {{options}}>{{name}}</option>
                                 </select>
                             </div>

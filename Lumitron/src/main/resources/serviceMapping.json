@@ -20,6 +20,10 @@
             "serviceClass": "com.lumitron.led.LedService", //Fully qualified class name
             "method": "deregisterDevice" //method name, case sensitive
         },
+        "getState": {
+            "serviceClass": "com.lumitron.led.LedService", //Fully qualified class name
+            "method": "getState" //method name, case sensitive
+        },
         "sendCommand": {
             "serviceClass": "com.lumitron.led.LedService", //Fully qualified class name
             "method": "sendCommand" //method name, case sensitive

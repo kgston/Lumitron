@@ -2,12 +2,16 @@ var lumitron = lumitron || {};
 
 lumitron.opts = $.extend(true, lumitron.opts || {}, (function() {
     return {
+        debug: false,
         device: {
             search: {
                 sequencialSearchCount: 10,
                 timeout: 2000,
                 fromIP: "10.10.1.1",
                 toIP: "10.10.1.20"
+            },
+            heartbeat: {
+                intervalLength: 5000
             }
         }
     };
@@ -40,16 +44,13 @@ lumitron = $.extend(true, lumitron || {}, (function() {
 	
 	//Private methods
 	
-	//Run all button bindings
-	var bindButtons = function() {
-		
-	};
-	
 	//Initializes the application and run all startup scripts
 	var init = function() {
-		lumitron.ui.inlineSVG();
-		bindButtons();
-		this.request.open();
+		return lumitron.ui.inlineSVG().done(function() {
+		    lumitron.request.init();
+            lumitron.device.init();
+            lumitron.music.init();
+        });
 	};
 	
 	//Util function to get a random UUID
@@ -78,13 +79,14 @@ lumitron.ui = $.extend(true, lumitron.ui || {}, (function() {
     //Converts all external SVGs into inline SVGs so they can be manipulated by CSS  
 	var inlineSVG = function() {
         //http://stackoverflow.com/questions/11978995/how-to-change-color-of-svg-image-using-css-jquery-svg-image-replacement
-		jQuery('img.svg').each(function(){
+        var inlining = $.Deferred();
+		$('img.svg').each(function(){
             var $img = jQuery(this);
             var imgID = $img.attr('id');
             var imgClass = $img.attr('class');
             var imgURL = $img.attr('src');
 
-            jQuery.get(imgURL, function(data) {
+            $.get(imgURL, function(data) {
                 // Get the SVG tag, ignore the rest
                 var $svg = jQuery(data).find('svg');
                 // Add replaced image's ID to the new SVG
@@ -96,23 +98,38 @@ lumitron.ui = $.extend(true, lumitron.ui || {}, (function() {
                     $svg = $svg.attr('class', imgClass+' replaced-svg');
                 }
                 // Remove any invalid XML tags as per http://validator.w3.org
-                $svg = $svg.removeAttr('xmlns:a')
+                $svg = $svg.removeAttr('xmlns:a');
                 // Replace image with new SVG
-                $img.replaceWith($svg)
+                $img.replaceWith($svg);
                 //And wrap it with an outer div
                 $svg.wrap(document.createElement("div"));
-            }, 'xml');
+            }, 'xml').done(function() {
+                if($('img.svg').length === 0) {
+                    inlining.resolve();
+                }
+            });
         });
+        return inlining.promise();
 	};
     
+    //Set the changeSVGSrc method
+    $.fn.changeSVGSrc = function(newSrc) {
+        $.get(newSrc, function(data) {
+                // Get the SVG tag, ignore the rest
+                var $svg = jQuery(data).find('svg');
+                //Replace contents of the existing svg with the new svg contents
+                this.empty().append($svg.children());
+            }.bind(this), 'xml');
+        return this;
+    };
     //Set the SVG icon click method
     $.fn.iconClick = function(callback) {
         return this.each(function(index, element) {
             var icon = $(this);
             var parentDiv = icon.parent();
-            parentDiv.click(callback);
+            parentDiv.click(callback.bind(parentDiv));
         });
-    }
+    };
     //Set the SVG icon off method
     $.fn.iconOff = function(eventName) {
         return this.each(function(index, element) {
@@ -120,7 +137,7 @@ lumitron.ui = $.extend(true, lumitron.ui || {}, (function() {
             var parentDiv = icon.parent();
             parentDiv.off(eventName);
         });
-    }
+    };
     //Set the SVG icon addClass method
     $.fn.iconAddClass = function(classnames) {
         return this.each(function(index, element) {
@@ -129,7 +146,7 @@ lumitron.ui = $.extend(true, lumitron.ui || {}, (function() {
                 this.classList.add(classname);
             }.bind(this));
         });
-    }
+    };
     //Set the SVG icon removeClass method
     $.fn.iconRemoveClass = function(classnames) {
         return this.each(function(index, element) {
@@ -138,11 +155,22 @@ lumitron.ui = $.extend(true, lumitron.ui || {}, (function() {
                 this.classList.remove(classname);
             }.bind(this));
         });
-    }
+    };
+    //Set the inputComplete method
+    $.fn.inputComplete = function(callback) {
+        return this.each(function(index, element) {
+            var input = $(this);
+            input.bind('blur keyup',function(event) {  
+                if(event.type == 'blur' || event.keyCode == 13) {
+                    callback.bind(this)(event);
+                }
+            }); 
+        });
+    };
     
     return {
         inlineSVG: inlineSVG
-    }
+    };
 })());
 
 $(document).ready(function() {

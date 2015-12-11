@@ -209,7 +209,7 @@ public class RequestHandler {
                         cause.printStackTrace();
                         sendError(uuid, cause.getOriginClass(), cause.getErrorCode(), cause.getMessage());
                     } else {
-                        RuntimeException cause = (RuntimeException) e.getCause();
+                        Throwable cause = (Throwable) e.getCause();
                         AppSystem.log(RequestHandler.class, 
                                 "Error executing service: " + cause.getMessage());
                         cause.printStackTrace();
