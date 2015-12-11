@@ -10,6 +10,7 @@ public class LedDeviceManager {
     private static final HashMap<String, Class<?>> DEVICE_MODELS_CLASS_MAP = new HashMap<>();
     static {
         DEVICE_MODELS_CLASS_MAP.put(LaguteLedController.MODEL, LaguteLedController.class);
+        DEVICE_MODELS_CLASS_MAP.put(ZJ200Controller.MODEL, ZJ200Controller.class);
     }
 
     private static HashMap<String, LedController> registeredDevices = new HashMap<>();
@@ -106,7 +107,10 @@ public class LedDeviceManager {
      * @param deviceName The name of the device to deregister
      */
     public static void deregisterDevice(String deviceName) {
-        registeredDevices.remove(deviceName);
+        if(registeredDevices.get(deviceName) != null) {
+            registeredDevices.get(deviceName).disconnect();
+            registeredDevices.remove(deviceName);
+        }
     }
     
     /**
@@ -150,6 +154,12 @@ public class LedDeviceManager {
 
         // Execute the command
         switch (command) {
+            case "connect":
+                controller.connect();
+                break;
+            case "disconnect":
+                controller.disconnect();
+                break;
             case "on":
                 controller.on();
                 break;

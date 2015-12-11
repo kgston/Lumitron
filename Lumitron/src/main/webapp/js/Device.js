@@ -221,7 +221,13 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
                         "device": name,
                         "command": $(this).val()
                     };
-                    lumitron.request.send("led", "sendCommand", params);
+                    lumitron.request.send("led", "sendCommand", params)
+                        .done(function() {
+                            $(this).removeClass("error");
+                        }.bind(this))
+                        .fail(function() {
+                            $(this).addClass("error");
+                        }.bind(this));
                 });
                 panel.find(".brightness").inputComplete(function() {
                     var params = {
@@ -229,7 +235,13 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
                         "command": "setBrightness",
                         "brightness": $(this).val()
                     };
-                    lumitron.request.send("led", "sendCommand", params);
+                    lumitron.request.send("led", "sendCommand", params)
+                        .done(function() {
+                            $(this).removeClass("error");
+                        }.bind(this))
+                        .fail(function() {
+                            $(this).addClass("error");
+                        }.bind(this));
                 });
                 panel.find(".colour").inputComplete(function() {
                     var params = {
@@ -237,11 +249,17 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
                         "command": "setColour",
                         "colour": $(this).val()
                     };
-                    lumitron.request.send("led", "sendCommand", params);
+                    lumitron.request.send("led", "sendCommand", params)
+                        .done(function() {
+                            $(this).removeClass("error");
+                        }.bind(this))
+                        .fail(function() {
+                            $(this).addClass("error");
+                        }.bind(this));
                 });
             },
             heartbeat: function() {
-                if(this.heartbeatIntervalId) {
+                if(this.heartbeatIntervalId || lumitron.opts.debug) {
                     return;
                 }
                 
@@ -261,12 +279,26 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
                                 0: "css/icons/Entypo/progress-empty.svg"
                             };
                             if(response.isAlive) {
+                                if(this.connectionStrength != null && this.connectionStrength < 3) {
+                                    var params = {
+                                        "device": name,
+                                        "command": "connect"
+                                    };
+                                    lumitron.request.send("led", "sendCommand", params);
+                                }
                                 this.connectionStrength = 3;
                                 this.panel.find(".connectionStrength").changeSVGSrc(statusSrc[this.connectionStrength.toString()]);
                             } else {
+                                if(this.connectionStrength && this.connectionStrength === 3) {
+                                    var params = {
+                                        "device": name,
+                                        "command": "disconnect"
+                                    };
+                                    lumitron.request.send("led", "sendCommand", params);
+                                }
                                 this.connectionStrength--;
                                 this.panel.find(".connectionStrength").changeSVGSrc(
-                                    statusSrc[this.connectionStrength.toString()] || "0");
+                                    statusSrc[this.connectionStrength.toString()] || statusSrc["0"]);
                             }
                         }.bind(this));
                 }.bind(this), heartbeatSettings.intervalLength);

@@ -1,10 +1,12 @@
 package com.lumitron.led;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Inet4Address;
-import java.net.SocketException;
+import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -20,14 +22,16 @@ import com.lumitron.util.AppSystem;
  */
 public abstract class GenericLedController implements LedController {
     protected String deviceName;
+
+    protected DatagramSocket udpConnection;
+    protected Socket tcpConnection;
     
     protected String ipAddress;
     protected final int port;
-    protected DatagramSocket connection;
     
-    protected String currentState = "";
-    protected String currentBrightness = "";
-    protected String currentHexColour = "";
+    protected String currentState = "off";
+    protected String currentBrightness = "0";
+    protected String currentHexColour = "000000";
     
     /**
      * Abstracted implementation of a LED controller for use with subclasses
@@ -70,38 +74,6 @@ public abstract class GenericLedController implements LedController {
         state.put("brightness", currentBrightness);
         state.put("colour", currentHexColour);
         return state;
-    }
-    
-    /* (non-Javadoc)
-     * @see com.lumitron.led.LedController#connect()
-     */
-    @Override
-    public void connect() throws LedException {
-        AppSystem.log(this.getClass(), "Connecting to " + deviceName);
-        try {
-            if(connection == null) {
-                connection = new DatagramSocket();
-                AppSystem.log(this.getClass(), "Connected!");
-            } else {
-                AppSystem.log(this.getClass(), "Already connected!");
-            }
-        } catch (SocketException e) {
-            AppSystem.log(this.getClass(), "Failed to connect! " + e.getMessage());
-            throw new LedException(this.getClass().getSimpleName(), "0012", "Unable to connect to device");
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see com.lumitron.led.LedController#disconnect()
-     */
-    @Override
-    public void disconnect() throws LedException {
-        off();
-        AppSystem.log(this.getClass(), "Disconnecting from " + deviceName);
-        if(connection != null) {
-            connection.close();
-            connection = null;
-        }
     }
     
     /* (non-Javadoc)
@@ -211,20 +183,20 @@ public abstract class GenericLedController implements LedController {
      * @return Returns the response from the controller. Returns null if hasResponse is false
      * @throws LedException
      */
-    protected String send(String hexCommand, boolean hasResponse) throws LedException {
+    protected String sendUDP(String hexCommand, boolean hasResponse) throws LedException {
         try {
             //Convert the command to bytes
             byte[] sendData = DatatypeConverter.parseHexBinary(hexCommand);
             //Create the UDP packet with the byte data along with destination information
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, Inet4Address.getByName(ipAddress) , port);
             //Fire away
-            connection.send(sendPacket);
+            udpConnection.send(sendPacket);
             
             //Depending on whether the controller returns a response
             if(hasResponse) {
                 byte[] buffer = new byte[1024];
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-                connection.receive(packet);
+                udpConnection.receive(packet);
                 buffer = packet.getData();
                 
                 byte[] data = Arrays.copyOf(buffer, packet.getLength()-1);
@@ -241,5 +213,52 @@ public abstract class GenericLedController implements LedController {
             throw new LedException(this.getClass().getSimpleName(), "0011", "Unable to send data to device");
         }
         return null;
+    }
+    
+    protected String sendTCP(String hexCommand, boolean hasResponse) throws LedException {
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            //Convert the command to bytes
+            byte[] sendData = DatatypeConverter.parseHexBinary(hexCommand);
+            //Create the TCP stream with the byte data along with destination information
+            in = tcpConnection.getInputStream();
+            out = tcpConnection.getOutputStream();
+            //Fire away
+            out.write(sendData);
+            
+            if(hasResponse) {
+                byte[] data = new byte[1024];
+                in.read(data);
+                data = trim(data);
+                
+                String responseString = DatatypeConverter.printHexBinary(data);
+                AppSystem.log(this.getClass(), deviceName + " responded with " + responseString);
+                return responseString;
+            }
+        }catch (IOException e) {
+            AppSystem.log(this.getClass(), "Error sending data " + hexCommand + " to " + deviceName);
+            AppSystem.log(this.getClass(), "Failed with error: " + e.getMessage());
+            e.printStackTrace();
+            throw new LedException(this.getClass().getSimpleName(), "0011", "Unable to send data to device");
+        } finally {
+//            try {
+//                out.close();
+//                in.close();
+//                connection.close();
+//            } catch (IOException e) {
+//                AppSystem.log(this.getClass(), "Unable to close TCP connection for " + deviceName);
+//            }
+        }
+        return null;
+    }
+    
+    private byte[] trim(byte[] bytes){
+        int i = bytes.length - 1;
+        while (i >= 0 && bytes[i] == 0){
+            --i;
+        }
+
+        return Arrays.copyOf(bytes, i + 1);
     }
 }

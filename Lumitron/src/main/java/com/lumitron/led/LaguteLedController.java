@@ -1,5 +1,8 @@
 package com.lumitron.led;
 
+import java.net.DatagramSocket;
+import java.net.SocketException;
+
 import com.lumitron.util.AppSystem;
 
 /**
@@ -8,8 +11,8 @@ import com.lumitron.util.AppSystem;
  *
  */
 public class LaguteLedController extends GenericLedController {
-    public static final String MODEL = "Lagute";
-    
+    static final String MODEL = "Lagute";
+
     private final String HEADER = "7E";
     private final String FOOTER = "00EF";
     
@@ -35,6 +38,38 @@ public class LaguteLedController extends GenericLedController {
     public String getModel() {
         return MODEL;
     }
+
+    /* (non-Javadoc)
+     * @see com.lumitron.led.LedController#connect()
+     */
+    @Override
+    public void connect() throws LedException {
+        AppSystem.log(this.getClass(), "Connecting to " + deviceName);
+        try {
+            if(udpConnection == null) {
+                udpConnection = new DatagramSocket();
+                AppSystem.log(this.getClass(), "Connected!");
+            } else {
+                AppSystem.log(this.getClass(), "Already connected!");
+            }
+        } catch (SocketException e) {
+            AppSystem.log(this.getClass(), "Failed to connect! " + e.getMessage());
+            throw new LedException(this.getClass().getSimpleName(), "0012", "Unable to connect to device");
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see com.lumitron.led.LedController#disconnect()
+     */
+    @Override
+    public void disconnect() throws LedException {
+        off();
+        AppSystem.log(this.getClass(), "Disconnecting from " + deviceName);
+        if(udpConnection != null) {
+            udpConnection.close();
+            udpConnection = null;
+        }
+    }
     
     /* (non-Javadoc)
      * @see com.lumitron.led.LedController#on()
@@ -43,7 +78,7 @@ public class LaguteLedController extends GenericLedController {
     public void on() throws LedException {
         AppSystem.log(this.getClass(), "Turning " + deviceName + " on");
         currentState = "on";
-        send(HEADER + COMMAND_ON + COLOUR_WHITE + FOOTER, false);
+        sendUDP(HEADER + COMMAND_ON + COLOUR_WHITE + FOOTER, false);
     }
 
     /* (non-Javadoc)
@@ -53,7 +88,7 @@ public class LaguteLedController extends GenericLedController {
     public void off() throws LedException {
         AppSystem.log(this.getClass(), "Turning " + deviceName + " off");
         currentState = "off";
-        send(HEADER + COMMAND_OFF + COLOUR_WHITE + FOOTER, false);
+        sendUDP(HEADER + COMMAND_OFF + COLOUR_WHITE + FOOTER, false);
     }
 
     /* (non-Javadoc)
@@ -65,7 +100,7 @@ public class LaguteLedController extends GenericLedController {
             throw new LedException(this.getClass().getSimpleName(), "0010", "Hex colour not valid");
         }
         AppSystem.log(this.getClass(), "Setting " + deviceName + " colour to: " + hexColourString);
-        send(HEADER + "070503" + hexColourString + FOOTER, false);
+        sendUDP(HEADER + "070503" + hexColourString + FOOTER, false);
         currentHexColour = hexColourString;
     }
     
@@ -83,6 +118,6 @@ public class LaguteLedController extends GenericLedController {
         if(levelHex.length() == 1) {
             levelHex = "0" + levelHex;
         }
-        send(HEADER + "0401" + levelHex + COLOUR_WHITE + FOOTER, false);
+        sendUDP(HEADER + "0401" + levelHex + COLOUR_WHITE + FOOTER, false);
     }
 }
