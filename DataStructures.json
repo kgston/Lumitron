@@ -137,3 +137,25 @@ setTimeout(function() {
         lumitron.request.send("led", "sendCommand", params);
     }, 3000);
 }, 2000);
+
+// Led events
+var ledEvents = [
+    {"time": "500",   "deviceName": "Lagute-0001", "command": "on"},
+    {"time": "1000",  "deviceName": "Lagute-0001", "command": "setBrightness",      "params": {"brightness": "50"}},
+    {"time": "2000",  "deviceName": "Lagute-0001", "command": "setColour",          "params": {"colour": "FF00FF"}},
+    {"time": "3500",  "deviceName": "Lagute-0001", "command": "setBrightness",      "params": {"brightness": "100"}},
+    {"time": "5000",  "deviceName": "Lagute-0001", "command": "off"},
+    {"time": "7500",  "deviceName": "Lagute-0001", "command": "on"},
+    {"time": "10000", "deviceName": "Lagute-0001", "command": "setBrightness",      "params": {"brightness": "50"}},
+    {"time": "12000", "deviceName": "Lagute-0001", "command": "setColour",          "params": {"colour": "0000FF"}},
+    {"time": "13500", "deviceName": "Lagute-0001", "command": "setBrightness",      "params": {"brightness": "100"}},
+    {"time": "15000", "deviceName": "Lagute-0001", "command": "off"},
+    {"time": "5000",  "deviceName": "Lagute-0002", "command": "transitionToColour", "params": {"colour": "FFFF00", "pauseInterval": "3", "incrementInterval": "1"}},
+]
+
+var params = {
+    "events": JSON.stringify(ledEvents)
+}
+lumitron.request.send("ledevents", "play", params);
+
+lumitron.request.send("ledevents", "stop");

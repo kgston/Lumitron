@@ -72,5 +72,16 @@
             "serviceClass": "com.lumitron.network.RequestService",
             "method": "resendResponse"
         }
+    },
+    "ledevents": {
+        //Service Name
+        "play": {
+            "serviceClass": "com.lumitron.ledevents.LedEventsService",
+            "method": "play"
+        },
+        "stop": {
+            "serviceClass": "com.lumitron.ledevents.LedEventsService",
+            "method": "stop"
+        }
     }
 }
