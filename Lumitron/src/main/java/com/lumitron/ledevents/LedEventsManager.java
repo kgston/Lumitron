@@ -6,7 +6,7 @@ import java.util.Collections;
 import com.lumitron.music.MusicHandler;
 
 public class LedEventsManager implements Runnable {
-    private static final Long SLEEP_UNTIL_START_MILLISECONDS = new Long(100);
+    private static final Long SLEEP_UNTIL_START_MILLISECONDS = new Long(10);
     private static final Long SLEEP_OFFSET_MILLISECONDS = new Long(-50);
 
     private static LedEventsManager executionRunnable;
@@ -54,7 +54,7 @@ public class LedEventsManager implements Runnable {
             executionThread.join();
             executionThread = null;
         } catch (InterruptedException e) {
-            // Ignore, this is the normal behavior
+            // Ignore, this is the normal behaviour
         }
     }
 
@@ -91,7 +91,7 @@ public class LedEventsManager implements Runnable {
                 }
 
                 // Execute the event and remove it from the list
-                System.out.println("<LedEventManager> [" + playbackTime + "µs] Executing event " + ledEvent.toString());
+                System.out.println("<LedEventManager> [" + playbackTime + "ms] Executing event " + ledEvent.toString());
                 ledEvent.execute();
                 ledEvents.remove(ledEvent);
             }

@@ -49,6 +49,7 @@ public class LaguteLedController extends GenericLedController {
             if(udpConnection == null) {
                 udpConnection = new DatagramSocket();
                 AppSystem.log(this.getClass(), "Connected!");
+                on();
             } else {
                 AppSystem.log(this.getClass(), "Already connected!");
             }
@@ -102,6 +103,14 @@ public class LaguteLedController extends GenericLedController {
         AppSystem.log(this.getClass(), "Setting " + deviceName + " colour to: " + hexColourString);
         sendUDP(HEADER + "070503" + hexColourString + FOOTER, false);
         currentHexColour = hexColourString;
+    }
+    
+    /* (non-Javadoc)
+     * @see com.lumitron.led.LedController#setStrobe(java.lang.String)
+     */
+    @Override
+    public void setStrobe(String hexColourString) throws LedException {
+        setColour(hexColourString);
     }
     
     /* (non-Javadoc)

@@ -57,7 +57,8 @@ public interface LedController {
     public void disconnect() throws LedException;
     
     /**
-     * Sets the colour to the specified RGB values immediately
+     * Sets the colour to the specified RGB values
+     * Depending on the device, the colour may not be reflected immediately depending to its hardware implementation
      * @param red The amount of red from 0-255
      * @param green The amount of green from 0-255
      * @param blue The amount of blue from 0-255
@@ -66,11 +67,28 @@ public interface LedController {
     public void setColour(int red, int green, int blue) throws LedException;
     
     /**
-     * Sets the colour to the specified hex colour immediately
+     * Sets the colour to the specified hex colour
+     * Depending on the device, the colour may not be reflected immediately depending to its hardware implementation
      * @param hexString The RGB colour in hex format (without the initial #). E.g FF0000 for red and 0000FF for green.
      * @throws LedException
      */
     public void setColour(String hexString) throws LedException;
+    
+    /**
+     * Sets the colour to the specified hex colour immediately, guarantees immediate colour change
+     * @param red The amount of red from 0-255
+     * @param green The amount of green from 0-255
+     * @param blue The amount of blue from 0-255
+     * @throws LedException
+     */
+    public void setStrobe(int red, int green, int blue) throws LedException;
+    
+    /**
+     * Sets the colour to the specified hex colour immediately, guarantees immediate colour change
+     * @param hexString The RGB colour in hex format (without the initial #). E.g FF0000 for red and 0000FF for green.
+     * @throws LedException
+     */
+    public void setStrobe(String hexString) throws LedException;
     
     /**
      * Algorithmic implementation to transit to the specified colour smoothly from the current colour

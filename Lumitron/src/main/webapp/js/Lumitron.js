@@ -2,7 +2,7 @@ var lumitron = lumitron || {};
 
 lumitron.opts = $.extend(true, lumitron.opts || {}, (function() {
     return {
-        debug: false,
+        debug: true,
         device: {
             search: {
                 sequencialSearchCount: 10,

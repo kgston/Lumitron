@@ -69,11 +69,11 @@ public class MusicHandler {
     }
     
     public static Long getCurrentPlaybackTime() {
-        return musicPlayer.getCurrentPlaybackTime();
+        return (musicPlayer != null)? musicPlayer.getCurrentPlaybackTime(): 0L;
     }
     
     public static Long getTotalPlaybackTime() {
-        return musicPlayer.getTotalPlaybackTime();
+        return (musicPlayer != null)? musicPlayer.getTotalPlaybackTime(): 0L;
     }
     
 }

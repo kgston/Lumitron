@@ -53,6 +53,7 @@ public class ZJ200Controller extends GenericLedController {
             if(tcpConnection == null) {
                 tcpConnection = new Socket (ipAddress, port);
                 AppSystem.log(this.getClass(), "Connected!");
+                on();
             } else {
                 AppSystem.log(this.getClass(), "Already connected!");
             }
@@ -102,7 +103,7 @@ public class ZJ200Controller extends GenericLedController {
         currentState = "off";
         sendTCP(OFF_CMD, false);
     }
-
+    
     /* (non-Javadoc)
      * @see com.lumitron.led.LedController#setColour(java.lang.String)
      */
@@ -114,11 +115,6 @@ public class ZJ200Controller extends GenericLedController {
         
         if(hexColourString.length() == 6) {
             AppSystem.log(this.getClass(), "Setting " + deviceName + " colour to: " + hexColourString);
-            sendTCP(STROBE_CMD_HEADER + hexColourString + STROBE_END_PADDING, false);
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {//Shhh don't disturb it
-            }
             sendTCP(TRANSISTION_CMD_HEADER + hexColourString + currentHexWWCW + RGB_CMD_SIGNAL, false);
             currentHexColour = hexColourString;
             
@@ -132,8 +128,27 @@ public class ZJ200Controller extends GenericLedController {
             String wwcwHex = hexColourString.substring(6);
             AppSystem.log(this.getClass(), "Setting " + deviceName + " colour to: " + rgbHex + " " + wwcwHex);
             sendTCP(TRANSISTION_CMD_HEADER + rgbHex + wwcwHex + ALL_CMD_SIGNAL, false);
-            currentHexColour = hexColourString;
+            currentHexColour = rgbHex;
             currentHexWWCW = wwcwHex;
+            
+        } else {
+            throw new LedException(this.getClass().getSimpleName(), "0010", "Hex colour has invalid length");
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see com.lumitron.led.LedController#setStrobe(java.lang.String)
+     */
+    @Override
+    public void setStrobe(String hexColourString) throws LedException {
+        if(hexColourString == null) {
+            throw new LedException(this.getClass().getSimpleName(), "0010", "Hex colour not valid");
+        }
+        
+        if(hexColourString.length() == 6) {
+            AppSystem.log(this.getClass(), "Setting " + deviceName + " colour to: " + hexColourString);
+            sendTCP(STROBE_CMD_HEADER + hexColourString + STROBE_END_PADDING, false);
+            currentHexColour = hexColourString;
             
         } else {
             throw new LedException(this.getClass().getSimpleName(), "0010", "Hex colour has invalid length");

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
+import com.lumitron.util.AppSystem;
+
 public class LedDeviceManager {
     private static final HashMap<String, Class<?>> DEVICE_MODELS_CLASS_MAP = new HashMap<>();
     static {
@@ -149,6 +151,7 @@ public class LedDeviceManager {
         LedController controller = registeredDevices.get(deviceName);
 
         if (controller == null) {
+            AppSystem.log(LedDeviceManager.class, "Device " + deviceName + " not found, skipping command");
             return false;
         }
 
@@ -169,6 +172,9 @@ public class LedDeviceManager {
             case "setColour":
                 controller.setColour(params.get("colour"));
                 break;
+            case "setStrobe":
+                controller.setStrobe(params.get("colour"));
+                break;
             case "setBrightness":
                 controller.setBrightness(params.get("brightness"));
                 break;
@@ -178,7 +184,6 @@ public class LedDeviceManager {
             default:
                 throw new LedException(LedDeviceManager.class.getSimpleName(), "0008", "Unknown command '" + command + "'");
         }
-
         return true;
     }
 }

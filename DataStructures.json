@@ -140,17 +140,40 @@ setTimeout(function() {
 
 // Led events
 var ledEvents = [
-    {"time": "500",   "deviceName": "Lagute-0001", "command": "on"},
-    {"time": "1000",  "deviceName": "Lagute-0001", "command": "setBrightness",      "params": {"brightness": "50"}},
-    {"time": "2000",  "deviceName": "Lagute-0001", "command": "setColour",          "params": {"colour": "FF00FF"}},
-    {"time": "3500",  "deviceName": "Lagute-0001", "command": "setBrightness",      "params": {"brightness": "100"}},
-    {"time": "5000",  "deviceName": "Lagute-0001", "command": "off"},
-    {"time": "7500",  "deviceName": "Lagute-0001", "command": "on"},
-    {"time": "10000", "deviceName": "Lagute-0001", "command": "setBrightness",      "params": {"brightness": "50"}},
-    {"time": "12000", "deviceName": "Lagute-0001", "command": "setColour",          "params": {"colour": "0000FF"}},
-    {"time": "13500", "deviceName": "Lagute-0001", "command": "setBrightness",      "params": {"brightness": "100"}},
-    {"time": "15000", "deviceName": "Lagute-0001", "command": "off"},
-    {"time": "5000",  "deviceName": "Lagute-0002", "command": "transitionToColour", "params": {"colour": "FFFF00", "pauseInterval": "3", "incrementInterval": "1"}},
+    {"time": "500",   "deviceName": "Test1", "command": "on"},
+    {"time": "1000",  "deviceName": "Test1", "command": "setBrightness",      "params": {"brightness": "50"}},
+    {"time": "2000",  "deviceName": "Test1", "command": "setColour",          "params": {"colour": "FF00FF"}},
+    {"time": "3500",  "deviceName": "Test1", "command": "setBrightness",      "params": {"brightness": "100"}},
+    {"time": "5000",  "deviceName": "Test1", "command": "off"},
+    {"time": "7500",  "deviceName": "Test1", "command": "on"},
+    {"time": "10000", "deviceName": "Test1", "command": "setBrightness",      "params": {"brightness": "50"}},
+    {"time": "12000", "deviceName": "Test1", "command": "setColour",          "params": {"colour": "0000FF"}},
+    {"time": "13500", "deviceName": "Test1", "command": "setBrightness",      "params": {"brightness": "100"}},
+    {"time": "15000", "deviceName": "Test1", "command": "off"},
+    {"time": "5000",  "deviceName": "Test2", "command": "transitionToColour", "params": {"colour": "FFFF00", "pauseInterval": "3", "incrementInterval": "1"}},
+]
+
+var ledEvents = [
+    {"time": "10",   "deviceName": "Test1", "command": "on"}
+]
+
+var increment = 100;
+var counter = 0;
+for(var i=100; i<=5000; i+=increment) {
+    if(counter % 2 == 0) {
+        ledEvents.push({"time": i,   "deviceName": "Test1", "command": "setStrobe", "params": {"colour": "FF0000"}});
+    } else {
+        ledEvents.push({"time": i,   "deviceName": "Test1", "command": "setStrobe", "params": {"colour": "0000FF"}});
+    }
+    counter++;
+}
+
+var ledEvents = [
+    {"time": "10",   "deviceName": "Test1", "command": "on"},
+    {"time": "20",   "deviceName": "Test1", "command": "setColour", "params": {"colour": "0000000000"}},
+    {"time": "100",   "deviceName": "Test1", "command": "setColour", "params": {"colour": "5050500000"}},
+    {"time": "400",   "deviceName": "Test1", "command": "setColour", "params": {"colour": "0050"}},
+    {"time": "1100",   "deviceName": "Test1", "command": "setColour", "params": {"colour": "5050"}},
 ]
 
 var params = {

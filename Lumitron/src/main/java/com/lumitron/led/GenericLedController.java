@@ -87,6 +87,18 @@ public abstract class GenericLedController implements LedController {
         
         setColour(redHex + greenHex + blueHex);
     }
+    
+    /* (non-Javadoc)
+     * @see com.lumitron.led.LedController#setStrobe(int, int, int)
+     */
+    @Override
+    public void setStrobe(int red, int green, int blue) throws LedException {
+        String redHex = toColourHex(red);
+        String greenHex = toColourHex(green);
+        String blueHex = toColourHex(blue);
+        
+        setStrobe(redHex + greenHex + blueHex);
+    }
 
     /* (non-Javadoc)
      * @see com.lumitron.led.LedController#transitionToColour(java.lang.String, java.lang.String, java.lang.String)
@@ -107,7 +119,7 @@ public abstract class GenericLedController implements LedController {
             fromRed = incrementColour(fromRed, toRed, increment);
             fromGreen = incrementColour(fromGreen, toGreen, increment);
             fromBlue = incrementColour(fromBlue, toBlue, increment);
-            setColour(fromRed, fromGreen, fromBlue);
+            setStrobe(fromRed, fromGreen, fromBlue);
             
             try {
                 Thread.sleep(Integer.parseInt(pauseInterval));

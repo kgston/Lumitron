@@ -1,6 +1,7 @@
 package com.lumitron.music;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import com.lumitron.network.LumitronService;
 import com.lumitron.network.RequestHandler;
@@ -33,7 +34,7 @@ public class MusicService implements LumitronService {
                     RequestHandler.stream(serviceRoute.get("uuid"), response); //Stream it back to the UI
                 }
                 try {
-                    Thread.sleep(200); //After that, take a short nap
+                    Thread.sleep(100); //After that, take a short nap
                 } catch (InterruptedException e) {
                     //Give whoever who disturbs your sleep the finger
                 } finally {
@@ -67,13 +68,19 @@ public class MusicService implements LumitronService {
     }
     
     private String convertTime(Long microSeconds) {
-        Double timeInSeconds = microSeconds.doubleValue() / 1000000 / 60;
-        int minutes = timeInSeconds.intValue();
-        String seconds = (new Double((timeInSeconds - minutes) * 60)).intValue() + "";
-        if(seconds.length() == 1) {
-            seconds = "0" + seconds;
+        Long timeInMilliseconds = TimeUnit.MICROSECONDS.toMillis(microSeconds);
+        Long minutes = TimeUnit.MILLISECONDS.toMinutes(timeInMilliseconds);
+        Long seconds = TimeUnit.MILLISECONDS.toSeconds(timeInMilliseconds) - TimeUnit.MINUTES.toSeconds(minutes);
+        Long milliseconds = timeInMilliseconds - TimeUnit.SECONDS.toMillis(seconds) - TimeUnit.MINUTES.toMillis(minutes);
+        String secondsString = seconds.toString();
+        String millisecondsString =  milliseconds.toString();
+        if(secondsString.length() == 1) {
+            secondsString = "0" + secondsString;
         }
-        return minutes + ":" + seconds;
+        while(millisecondsString.length() < 3) {
+            millisecondsString = "0" + millisecondsString;
+        }
+        return minutes + ":" + secondsString + ":" + millisecondsString;
     }
     
     @Override
