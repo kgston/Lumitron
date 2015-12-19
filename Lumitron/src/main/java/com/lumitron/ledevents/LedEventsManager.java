@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.lumitron.music.MusicHandler;
+import com.lumitron.util.AppSystem;
 
 public class LedEventsManager implements Runnable {
     private static final Long SLEEP_UNTIL_START_MILLISECONDS = new Long(10);
-    private static final Long SLEEP_OFFSET_MILLISECONDS = new Long(-50);
+    private static final Long SLEEP_OFFSET_MILLISECONDS = new Long(0);
 
     private static LedEventsManager executionRunnable;
     private static Thread executionThread;
@@ -60,6 +61,7 @@ public class LedEventsManager implements Runnable {
 
     @Override
     public void run() {
+        Long playbackTime = 0L;
         while (isRunning) {
             // Stop the execution if the array of events is empty
             if (ledEvents.isEmpty()) {
@@ -68,7 +70,7 @@ public class LedEventsManager implements Runnable {
             }
 
             // Retrieve the current playback time
-            Long playbackTime = MusicHandler.getCurrentPlaybackTime();
+            playbackTime = MusicHandler.getCurrentPlaybackTime();
 
             // If the music has not started yet, reschedule the start
             if (playbackTime == 0) {
@@ -76,25 +78,56 @@ public class LedEventsManager implements Runnable {
                 continue;
             }
 
-            while (!ledEvents.isEmpty()) {
-                // Get the next event to be executed
-                LedEvent ledEvent = ledEvents.get(0);
-
-                // Report the execution if the playback time has not been reached yet
-                Long pause = (ledEvent.getExecutionTime() * 1000) - playbackTime;
-
+//            while (!ledEvents.isEmpty()) {
+//                // Get the next event to be executed
+//                LedEvent ledEvent = ledEvents.get(0);
+//
+//                // Report the execution if the playback time has not been reached yet
+//                Long pause = (ledEvent.getExecutionTime() * 1000) - playbackTime;
+//
+//                if (pause > 0) {
+//                    pause /= 1000;
+//                    pause += (pause + SLEEP_OFFSET_MILLISECONDS > 0) ? SLEEP_OFFSET_MILLISECONDS : 0;
+//                    sleep(pause);
+//                    //break;
+//                }
+//
+//                // Execute the event and remove it from the list
+//                System.out.println("<LedEventManager> [" + playbackTime + "ms] Executing event " + ledEvent.toString());
+//                ledEvent.execute();
+//                ledEvents.remove(ledEvent);
+//            }
+            
+            LedEvent upcomingLedEvent = getNextEvent();
+            if(upcomingLedEvent != null) {
+                Long pause = (upcomingLedEvent.getExecutionTime() * 1000) - playbackTime;
                 if (pause > 0) {
                     pause /= 1000;
                     pause += (pause + SLEEP_OFFSET_MILLISECONDS > 0) ? SLEEP_OFFSET_MILLISECONDS : 0;
+                    AppSystem.log(this.getClass(), "Sleeping for " + pause + "ms");
                     sleep(pause);
-                    break;
                 }
-
-                // Execute the event and remove it from the list
-                System.out.println("<LedEventManager> [" + playbackTime + "ms] Executing event " + ledEvent.toString());
-                ledEvent.execute();
-                ledEvents.remove(ledEvent);
+                playbackTime = MusicHandler.getCurrentPlaybackTime();
+                AppSystem.log(this.getClass(), "Executing event @ " + (playbackTime/1000) + "ms delay: " + ((playbackTime - upcomingLedEvent.getExecutionTime() * 1000) / 1000) + "ms\n" + upcomingLedEvent.toString());
+                upcomingLedEvent.execute();
+                ledEvents.remove(upcomingLedEvent);
+                    
+                LedEvent followingLedEvent = getNextEvent();
+                while(followingLedEvent != null && (followingLedEvent.getExecutionTime() * 1000) - playbackTime <= 0) {
+                    AppSystem.log(this.getClass(), "Executing event @" + playbackTime + followingLedEvent.toString());
+                    followingLedEvent.execute();
+                    ledEvents.remove(followingLedEvent);
+                    followingLedEvent = getNextEvent();
+                }
             }
+        }
+    }
+    
+    private LedEvent getNextEvent() {
+        if(ledEvents.size() == 0) {
+            return null;
+        } else {
+            return ledEvents.get(0);
         }
     }
 

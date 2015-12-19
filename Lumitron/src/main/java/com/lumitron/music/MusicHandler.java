@@ -5,7 +5,9 @@ import java.io.File;
 public class MusicHandler {
     
     private static MusicController musicPlayer;
+    private static String musicFilepath;
     private static volatile boolean paused = false;
+    private static volatile boolean isSeeking = false;
     
     public static Long load(String musicFilepath) throws MusicException {
         //If there is a existing musicPlayer, stop and unload it first
@@ -14,8 +16,8 @@ public class MusicHandler {
             musicPlayer = null;
         }
         //Load the music file
-        File musicFile = new File(musicFilepath);
-        musicPlayer = MusicController.load(musicFile);
+        MusicHandler.musicFilepath = musicFilepath;
+        musicPlayer = MusicController.load(new File(musicFilepath));
         //Return the total length of the file
         return getTotalPlaybackTime();
     }
@@ -52,8 +54,36 @@ public class MusicHandler {
         }
     }
     
+    public static void seek(Long seekTo) throws MusicException {
+        if(isLoaded()) {
+            if(seekTo > getCurrentPlaybackTime()) {
+                musicPlayer.seek(seekTo);
+            } else {
+                boolean isPaused = isPaused();
+                boolean isStopped = isStopped();
+                isSeeking = true;
+                stop();
+                musicPlayer = MusicController.load(new File(musicFilepath));
+                musicPlayer.seek(seekTo);
+                if(!isStopped) {
+                    play();
+                }
+                if(isPaused) {
+                    pause();
+                }
+                isSeeking = false;
+            }
+        } else {
+            throw new MusicException(MusicHandler.class.getSimpleName(), "0001", "Music file has yet to be loaded");
+        }
+    }
+    
     public static boolean isLoaded() {
         return (musicPlayer != null)? true: false;
+    }
+    
+    public static boolean isSeeking() {
+        return isSeeking;
     }
     
     public static boolean isPaused() {

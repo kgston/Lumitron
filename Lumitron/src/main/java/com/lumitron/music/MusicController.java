@@ -73,6 +73,14 @@ public class MusicController extends Thread {
         return decoder.pause();
     }
     
+    public void seek(Long seekTo) {
+        decoder.seek(seekTo);
+    }
+    
+    public boolean isPaused() {
+        return decoder.isPaused();
+    }
+    
     public boolean isStopped() {
         return decoder.isStopped();
     }

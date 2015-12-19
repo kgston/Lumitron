@@ -104,6 +104,8 @@ lumitron.request.send("music", "load", params);
 
 lumitron.request.send("music", "play", null);
 
+lumitron.request.send("music", "seek", {seekTo: 60000000});
+
 lumitron.request.send("music", "pause", null);
 
 lumitron.request.send("music", "stop", null);

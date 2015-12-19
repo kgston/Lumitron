@@ -8,6 +8,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -31,10 +33,10 @@ import com.lumitron.util.LumitronException;
 public class RequestHandler {
     //Response cache - When client disconnects in between processing
     //Request UUID - requests
-    private static HashMap<String, HashMap<String, Object>> cache = new HashMap<>();
+    private static ConcurrentHashMap<String, HashMap<String, Object>> cache = new ConcurrentHashMap<>();
     //Map of which request-response goes to which session
     //Request UUID - Session
-    private static HashMap<String, Session> deliveryMap = new HashMap<>();
+    private static ConcurrentHashMap<String, Session> deliveryMap = new ConcurrentHashMap<>();
     //Service Mapping of the domain-service name to the class and method
     //Domain name -> Services Map :: Service name -> Service Details Map :: className || methodName -> String
     private static HashMap<String, HashMap<String, HashMap<String, String>>> serviceMap = new HashMap<>();

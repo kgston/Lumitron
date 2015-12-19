@@ -39,6 +39,10 @@
             "serviceClass": "com.lumitron.music.MusicService", //Fully qualified class name
             "method": "play" //method name, case sensitive
         },
+        "seek": {
+            "serviceClass": "com.lumitron.music.MusicService", //Fully qualified class name
+            "method": "seek" //method name, case sensitive
+        },
         "pause": {
             "serviceClass": "com.lumitron.music.MusicService", //Fully qualified class name
             "method": "pause" //method name, case sensitive

@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.lumitron.network.LumitronService;
 import com.lumitron.network.RequestHandler;
+import com.lumitron.util.AppSystem;
 
 
 public class MusicService implements LumitronService {
@@ -23,10 +24,13 @@ public class MusicService implements LumitronService {
         if(!MusicHandler.isPaused()) {
             MusicHandler.play(); //Start playback
             
+            //While till the music starts
+            while(MusicHandler.isStopped()) {}
+            
             //Create a shared response object
             HashMap<String, Object> response = new HashMap<>();
-            while(!MusicHandler.isStopped()) { //While it is playing
-                if(!MusicHandler.isPaused()) { //And it is not paused
+            while(!MusicHandler.isStopped() || MusicHandler.isSeeking()) { //While it is playing
+                if(!MusicHandler.isPaused() && !MusicHandler.isSeeking()) { //And it is not paused
                     //Get the playback time and push into the hashmap
                     Long currentPlaybackInMicro = MusicHandler.getCurrentPlaybackTime();
                     response.put("currentPlaybackTime", convertTime(currentPlaybackInMicro));
@@ -39,7 +43,7 @@ public class MusicService implements LumitronService {
                     //Give whoever who disturbs your sleep the finger
                 } finally {
                     //Once you awaken from your slumber and find the music has stopped
-                    if(MusicHandler.isStopped()) {
+                    if(MusicHandler.isStopped() && !MusicHandler.isSeeking()) {
                         //Tell the front end the damn music has stopped!
                         response.put("hasCompleted", true);
                         response.put("currentPlaybackTime", convertTime(0L));
@@ -64,6 +68,13 @@ public class MusicService implements LumitronService {
         MusicHandler.stop();
         HashMap<String, Object> response = new HashMap<>();
         response.put("state", "stopped");
+        RequestHandler.send(serviceRoute.get("uuid"), response);
+    }
+    
+    public void seek() throws MusicException {
+        MusicHandler.seek(Long.parseLong(params.get("seekTo")));
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("state", "seeked");
         RequestHandler.send(serviceRoute.get("uuid"), response);
     }
     

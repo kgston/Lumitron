@@ -43,12 +43,17 @@ lumitron.music = $.extend(true, lumitron.music || {}, (function() {
     
     var stop = function(event, silent) {
         if(!silent) {
-            lumitron.request.send("music", "stop");
+            lumitron.request.send("music", "stop").done(function() {
+                onStop();
+            });
         } else {
+            onStop();
+            load();
+        }
+        function onStop() {
             $("#stop").iconOff().iconAddClass("iconActive");
             $("#pause").iconOff().iconRemoveClass("iconActive").iconAddClass("iconDisabled");
             $("#play").iconOff().iconClick(play).iconRemoveClass("iconActive");
-            load();
         }
     };
     
