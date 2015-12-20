@@ -16,7 +16,8 @@ lumitron.music = $.extend(true, lumitron.music || {}, (function() {
     };
     
     var play = function() {
-        lumitron.request.send("music", "play")
+        lumitron.events.registerEvents().done(function() {
+            lumitron.request.send("music", "play")
             .progress(function(response) {
                 var width = (response.currentPlaybackInMicro / totalPlaybackInMicro * 100) + "%";
                 $("#playbackTimeline").width(width);
@@ -30,6 +31,7 @@ lumitron.music = $.extend(true, lumitron.music || {}, (function() {
                     stop(null, true);
                 }
             });
+        });
         $("#play").iconOff().iconAddClass("iconActive");
         $("#pause").iconOff().iconClick(pause).iconRemoveClass("iconDisabled iconActive");
         $("#stop").iconOff().iconClick(stop).iconRemoveClass("iconDisabled iconActive");

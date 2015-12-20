@@ -81,7 +81,9 @@ public class RequestHandler {
         //Register this connection in the queue
         try {
             session.getBasicRemote().sendText(newResponse("Open connection", "receipt", null, true));
+            session.setMaxTextMessageBufferSize(1024 * 1000);
             AppSystem.log(this.getClass(), "Connection opened");
+            AppSystem.log(this.getClass(), "Buffer size: " + session.getMaxTextMessageBufferSize());
         } catch(IOException ioe) {
             AppSystem.log(this.getClass(), "Unable to send receipt for new connection");
         }

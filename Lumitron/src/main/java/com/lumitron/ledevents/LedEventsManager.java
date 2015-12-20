@@ -8,7 +8,7 @@ import com.lumitron.util.AppSystem;
 
 public class LedEventsManager implements Runnable {
     private static final Long SLEEP_UNTIL_START_MILLISECONDS = new Long(10);
-    private static final Long SLEEP_OFFSET_MILLISECONDS = new Long(0);
+    private static final Long SLEEP_OFFSET_MILLISECONDS = new Long(-50);
 
     private static LedEventsManager executionRunnable;
     private static Thread executionThread;
@@ -87,13 +87,16 @@ public class LedEventsManager implements Runnable {
 //
 //                if (pause > 0) {
 //                    pause /= 1000;
-//                    pause += (pause + SLEEP_OFFSET_MILLISECONDS > 0) ? SLEEP_OFFSET_MILLISECONDS : 0;
+//                    //pause += (pause + SLEEP_OFFSET_MILLISECONDS > 0) ? SLEEP_OFFSET_MILLISECONDS : 0;
+//                    pause = 5L;
+//                    AppSystem.log(this.getClass(), "Current: " + playbackTime/1000 + "ms Sleeping for: " + pause + "ms'");
 //                    sleep(pause);
-//                    //break;
+//                    break;
 //                }
 //
 //                // Execute the event and remove it from the list
-//                System.out.println("<LedEventManager> [" + playbackTime + "ms] Executing event " + ledEvent.toString());
+//                //System.out.println("<LedEventManager> [" + playbackTime + "ms] Executing event " + ledEvent.toString());
+//                AppSystem.log(this.getClass(), "Executing event @ " + (playbackTime/1000) + "ms delay: " + ((playbackTime - ledEvent.getExecutionTime() * 1000) / 1000) + "ms\n" + ledEvent.toString());
 //                ledEvent.execute();
 //                ledEvents.remove(ledEvent);
 //            }

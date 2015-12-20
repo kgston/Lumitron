@@ -6,15 +6,15 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
             options: "disabled selected"
         }
     ];
-    var avaliableDevices = [];
+    var availableDevices = [];
     var registeredDevices = [];
     
-    var registeredDevicesStencil, avaliableDevicesStencil;
+    var registeredDevicesStencil, availableDevicesStencil;
     
     //Only works within the last octet
     var search = function(fromIP, toIP) {
-        avaliableDevices = [];
-        avaliableDevicesStencil.clear();
+        availableDevices = [];
+        availableDevicesStencil.clear();
         
         var searchSettings = lumitron.opts.device.search;
         var sequencialSearchCount = searchSettings.sequencialSearchCount;
@@ -60,9 +60,21 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
                 });
                 if(!isRegistered) {
                     getMacAddress(response.ipAddress).done(function(response) {
-                        //Add device to avaliable list
+                        //Register the device if is known, else show as avaliable
                         if(response) {
-                            displayAvaliableDevice(response);
+                            var devices = lumitron.project.devices;
+                            var isFound = !devices.every(function(device) {
+                                if(device.macAddress === response.macAddress) {
+                                    response.deviceName = device.deviceName;
+                                    response.controller = device.controller;
+                                    registerDevice(response)
+                                    return false;
+                                }
+                                return true;
+                            });
+                            if(!isFound) {
+                                displayAvaliableDevice(response);
+                            }
                         }
                     });
                 }
@@ -75,9 +87,9 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
         }
         
         function displayAvaliableDevice(deviceDetails) {
-            avaliableDevices.push(deviceDetails);
+            availableDevices.push(deviceDetails);
             deviceDetails.deviceControllers = deviceControllers;
-            var $renderedPanel = avaliableDevicesStencil.render(deviceDetails, "fragment");
+            var $renderedPanel = availableDevicesStencil.render(deviceDetails, "fragment");
             
             //Set click bindings for the device
             $renderedPanel.find(".registerDeviceBtn").iconClick(function() {
@@ -111,14 +123,21 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
     
     var getAvaliableDevices = function() {
         var searchSettings = lumitron.opts.device.search;
-        avaliableDevicesStencil.clear();
+        availableDevicesStencil.clear();
         search(searchSettings.fromIP, searchSettings.toIP);
     };
     
     var registerDevice = function(deviceDetails) {
-        var $avaliableDevicePanel = this.closest(".device");
-        var name = $avaliableDevicePanel.find(".deviceName").val();
-        var model = $avaliableDevicePanel.find(".deviceModel").val();
+        var name, model;
+        if(this instanceof jQuery) {
+            var $avaliableDevicePanel = this.closest(".device");
+            name = $avaliableDevicePanel.find(".deviceName").val();
+            model = $avaliableDevicePanel.find(".deviceModel").val();
+        } else {
+            name = deviceDetails.deviceName;
+            model =  deviceDetails.controller;
+        }
+        
         var params = {
             "name": name,
             "model": model,
@@ -127,8 +146,10 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
         return lumitron.request.send("led", "registerDevice", params)
             .done(function(response) {
                 if(response.isRegistered) {
-                    deviceDetails.name = $avaliableDevicePanel.find(".deviceName").val();
-                    $avaliableDevicePanel.remove();
+                    deviceDetails.name = name;
+                    if($avaliableDevicePanel) {
+                        $avaliableDevicePanel.remove(); 
+                    }
                     
                     var registeredDevice = newRegisteredDevice(
                         deviceDetails.ipAddress, 
@@ -155,6 +176,7 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
                         deviceDetails.name, 
                         deviceDetails.model
                     );
+                    registeredDevice.setColour("0505050505")
                     registeredDevice.update();
                     registeredDevices.push(registeredDevice);
                 });
@@ -180,6 +202,53 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
                 }
                 return this;
             },
+            setColour: function(hexColour) {
+                var uiObj = this.panel.find(".brightness");
+                var params = {
+                    "device": name,
+                    "command": "setColour",
+                    "colour": hexColour
+                };
+                lumitron.request.send("led", "sendCommand", params)
+                    .done(function() {
+                        uiObj.removeClass("error");
+                        this.colour = hexColour;
+                    }.bind(this))
+                    .fail(function() {
+                        uiObj.addClass("error");
+                    }.bind(this));
+            },
+            setBrightness: function(brightnessValue) {
+                var uiObj = this.panel.find(".brightness");
+                var params = {
+                    "device": name,
+                    "command": "setBrightness",
+                    "brightness": brightnessValue
+                };
+                lumitron.request.send("led", "sendCommand", params)
+                    .done(function() {
+                        uiObj.removeClass("error");
+                        this.brightness = brightnessValue;
+                    }.bind(this))
+                    .fail(function() {
+                        uiObj.addClass("error");
+                    }.bind(this));
+            },
+            setState: function(state) {
+                var uiObj = this.panel.find(".state");
+                var params = {
+                    "device": name,
+                    "command": state
+                };
+                return lumitron.request.send("led", "sendCommand", params)
+                    .done(function() {
+                        uiObj.removeClass("error");
+                        this.state = state;
+                    }.bind(this))
+                    .fail(function() {
+                        uiObj.addClass("error");
+                    }.bind(this));
+            },
             update: function() {
                 var params = {
                     "device": this.name
@@ -193,6 +262,7 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
                     }.bind(this));
             },
             applyPanelBindings: function() {
+                var deviceObject = this;
                 var name = this.name;
                 var panel = this.panel;
                 var clearHeartbeat = this.clearHeartbeat.bind(this);
@@ -217,45 +287,13 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
                         });
                 });
                 panel.find(".state").change(function() {
-                    var params = {
-                        "device": name,
-                        "command": $(this).val()
-                    };
-                    lumitron.request.send("led", "sendCommand", params)
-                        .done(function() {
-                            $(this).removeClass("error");
-                        }.bind(this))
-                        .fail(function() {
-                            $(this).addClass("error");
-                        }.bind(this));
+                    deviceObject.setState($(this).val());
                 });
                 panel.find(".brightness").inputComplete(function() {
-                    var params = {
-                        "device": name,
-                        "command": "setBrightness",
-                        "brightness": $(this).val()
-                    };
-                    lumitron.request.send("led", "sendCommand", params)
-                        .done(function() {
-                            $(this).removeClass("error");
-                        }.bind(this))
-                        .fail(function() {
-                            $(this).addClass("error");
-                        }.bind(this));
+                    deviceObject.setBrightness($(this).val());
                 });
                 panel.find(".colour").inputComplete(function() {
-                    var params = {
-                        "device": name,
-                        "command": "setColour",
-                        "colour": $(this).val()
-                    };
-                    lumitron.request.send("led", "sendCommand", params)
-                        .done(function() {
-                            $(this).removeClass("error");
-                        }.bind(this))
-                        .fail(function() {
-                            $(this).addClass("error");
-                        }.bind(this));
+                    deviceObject.setColour($(this).val());
                 });
             },
             heartbeat: function() {
@@ -322,7 +360,7 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
     
     $(document).ready(function() {
         registeredDevicesStencil = stencil.define("registeredDevicesStencil", "#registeredDevices");
-        avaliableDevicesStencil = stencil.define("avaliableDevicesStencil", "#avaliableDevices");
+        availableDevicesStencil = stencil.define("avaliableDevicesStencil", "#avaliableDevices");
     });
     
     return {

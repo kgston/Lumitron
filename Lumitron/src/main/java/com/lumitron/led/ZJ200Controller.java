@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 
 import com.lumitron.util.AppSystem;
 
@@ -41,6 +42,18 @@ public class ZJ200Controller extends GenericLedController {
     @Override
     public String getModel() {
         return MODEL;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HashMap<String, Object> getState() {
+        HashMap<String, Object> state = new HashMap<>();
+        state.put("state", currentState);
+        state.put("brightness", currentBrightness);
+        state.put("colour", currentHexColour + currentHexWWCW);
+        return state;
     }
 
     /* (non-Javadoc)
@@ -130,7 +143,6 @@ public class ZJ200Controller extends GenericLedController {
             sendTCP(TRANSISTION_CMD_HEADER + rgbHex + wwcwHex + ALL_CMD_SIGNAL, false);
             currentHexColour = rgbHex;
             currentHexWWCW = wwcwHex;
-            
         } else {
             throw new LedException(this.getClass().getSimpleName(), "0010", "Hex colour has invalid length");
         }

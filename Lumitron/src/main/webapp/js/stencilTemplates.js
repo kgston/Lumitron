@@ -370,7 +370,7 @@ stencilTemplates = (function() {
                                                     //Count the number of matches, it should match all terms for success
                                                     var matches = 0;
                                                     searchTerms.forEach(function(searchTerm) {
-                                                        if(rowColumn.content.search(searchTerm) >= 0) matches++;
+                                                        if(rowColumn.content.toString().search(searchTerm) >= 0) matches++;
                                                     });
                                                     if(matches === searchTerms.length) {
                                                         found = true;
