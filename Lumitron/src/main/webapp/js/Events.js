@@ -40,18 +40,17 @@ lumitron.events = (function() {
     };
     
     $(document).ready(function() {
-        var events = lumitron.project.events;
-        var increment = 250;
-        var counter = 0;
-        for(var i=100; i<=20000; i+=increment) {
-            if(counter % 2 == 0) {
-                events.push({"time": i,   "deviceName": "Test1", "command": "setStrobe", "params": {"colour": "FF0000"}});
-            } else {
-                events.push({"time": i,   "deviceName": "Test1", "command": "setStrobe", "params": {"colour": "0000FF"}});
-            }
-            counter++;
-        }
-        init();
+        //var events = lumitron.project.events;
+        // var increment = 250;
+        // var counter = 0;
+        // for(var i=100; i<=20000; i+=increment) {
+        //     if(counter % 2 == 0) {
+        //         events.push({"time": i,   "deviceName": "Test1", "command": "setStrobe", "params": {"colour": "FF0000"}});
+        //     } else {
+        //         events.push({"time": i,   "deviceName": "Test1", "command": "setStrobe", "params": {"colour": "0000FF"}});
+        //     }
+        //     counter++;
+        // }
     });
     
     return {

@@ -2744,6 +2744,7 @@ lumitron = $.extend(true, lumitron || {}, (function() {
 		    lumitron.request.init();
             lumitron.device.init();
             lumitron.music.init();
+            lumitron.events.init();
         });
 	};
 	
