@@ -203,13 +203,13 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
                 return this;
             },
             setColour: function(hexColour) {
-                var uiObj = this.panel.find(".brightness");
+                var uiObj = this.panel.find(".colour");
                 var params = {
                     "device": name,
                     "command": "setColour",
                     "colour": hexColour
                 };
-                lumitron.request.send("led", "sendCommand", params)
+                return lumitron.request.send("led", "sendCommand", params)
                     .done(function() {
                         uiObj.removeClass("error");
                         this.colour = hexColour;
@@ -225,7 +225,7 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
                     "command": "setBrightness",
                     "brightness": brightnessValue
                 };
-                lumitron.request.send("led", "sendCommand", params)
+                return lumitron.request.send("led", "sendCommand", params)
                     .done(function() {
                         uiObj.removeClass("error");
                         this.brightness = brightnessValue;
