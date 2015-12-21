@@ -5,19 +5,25 @@ lumitron.music = $.extend(true, lumitron.music || {}, (function() {
     
     var load = function(path) {
         var params = lumitron.project.music;
-        lumitron.request.send("music", "load", params)
+        return lumitron.request.send("music", "load", params)
             .done(function(response) {
                 totalPlaybackInMicro = response.totalPlaybackInMicro;
                 $("#playbackTimeline").width("0%");
                 $("#totalPlaybackTime").text(response.totalPlaybackTime);
                 
                 $("#play").iconOff().iconClick(play).iconRemoveClass("iconDisabled");
+                $("#musicTimeline").off().click(seekEvent);
+                
+                //Register the timing events after loading music
+                lumitron.events.registerEvents();
             });
     };
     
     var play = function() {
-        lumitron.events.registerEvents().done(function() {
-            lumitron.request.send("music", "play")
+        $("#play").iconOff().iconAddClass("iconActive");
+        $("#pause").iconOff().iconClick(pause).iconRemoveClass("iconDisabled iconActive");
+        $("#stop").iconOff().iconClick(stop).iconRemoveClass("iconDisabled iconActive");
+        return lumitron.request.send("music", "play")
             .progress(function(response) {
                 var width = (response.currentPlaybackInMicro / totalPlaybackInMicro * 100) + "%";
                 $("#playbackTimeline").width(width);
@@ -31,26 +37,33 @@ lumitron.music = $.extend(true, lumitron.music || {}, (function() {
                     stop(null, true);
                 }
             });
-        });
-        $("#play").iconOff().iconAddClass("iconActive");
-        $("#pause").iconOff().iconClick(pause).iconRemoveClass("iconDisabled iconActive");
-        $("#stop").iconOff().iconClick(stop).iconRemoveClass("iconDisabled iconActive");
+    };
+    
+    var seek = function(timeInMicro) {
+        return lumitron.request.send("music", "seek", {seekTo: Math.floor(timeInMicro)});
+    };
+    
+    var seekEvent = function(event) {
+        var timelineWidth = $(this).width();
+        var offsetX = event.offsetX;
+        var targetTime = totalPlaybackInMicro * offsetX / timelineWidth;
+        seek(targetTime);
     };
     
     var pause = function() {
-        lumitron.request.send("music", "pause");
         $("#pause").iconOff().iconAddClass("iconActive");
         $("#play").iconOff().iconClick(play).iconRemoveClass("iconActive");
+        return lumitron.request.send("music", "pause");
     };
     
     var stop = function(event, silent) {
         if(!silent) {
-            lumitron.request.send("music", "stop").done(function() {
+            return lumitron.request.send("music", "stop").done(function() {
                 onStop();
             });
         } else {
             onStop();
-            load();
+            return load();
         }
         function onStop() {
             $("#stop").iconOff().iconAddClass("iconActive");
@@ -71,6 +84,7 @@ lumitron.music = $.extend(true, lumitron.music || {}, (function() {
         init: init,
         load: load,
         play: play,
+        seek: seek,
         pause: pause,
         stop: stop
     };
