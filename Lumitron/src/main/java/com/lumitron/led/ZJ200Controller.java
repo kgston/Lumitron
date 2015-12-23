@@ -30,6 +30,7 @@ public class ZJ200Controller extends GenericLedController {
     private static final String STROBE_END_PADDING = "00010203000102030001020300010203000102030001020300010203000102030001020300010203000102030001020300010203000102030001020300013BFF0F";
     
     private String currentHexWWCW = "0000";
+    private double brightnessMultipler = Double.parseDouble(currentBrightness) / 100;
     
     public ZJ200Controller(String deviceName, String ipAddress) throws LedException {
         super(deviceName, ipAddress, 5577);
@@ -128,19 +129,19 @@ public class ZJ200Controller extends GenericLedController {
         
         if(hexColourString.length() == 6) {
             AppSystem.log(this.getClass(), "Setting " + deviceName + " colour to: " + hexColourString);
-            sendTCP(TRANSISTION_CMD_HEADER + hexColourString + currentHexWWCW + RGB_CMD_SIGNAL, false);
+            sendTCP(TRANSISTION_CMD_HEADER + adjustBrightness(hexColourString) + adjustBrightness(currentHexWWCW) + RGB_CMD_SIGNAL, false);
             currentHexColour = hexColourString;
             
         } else if(hexColourString.length() == 4) {
             AppSystem.log(this.getClass(), "Setting " + deviceName + " colour to: " + currentHexColour + " " + hexColourString);
-            sendTCP(TRANSISTION_CMD_HEADER + currentHexColour + hexColourString + WWCW_CMD_SIGNAL, false);
+            sendTCP(TRANSISTION_CMD_HEADER + adjustBrightness(currentHexColour) + adjustBrightness(hexColourString) + WWCW_CMD_SIGNAL, false);
             currentHexWWCW = hexColourString;
             
         } else if(hexColourString.length() == 10) {
             String rgbHex = hexColourString.substring(0, 6);
             String wwcwHex = hexColourString.substring(6);
             AppSystem.log(this.getClass(), "Setting " + deviceName + " colour to: " + rgbHex + " " + wwcwHex);
-            sendTCP(TRANSISTION_CMD_HEADER + rgbHex + wwcwHex + ALL_CMD_SIGNAL, false);
+            sendTCP(TRANSISTION_CMD_HEADER + adjustBrightness(rgbHex) + adjustBrightness(wwcwHex) + ALL_CMD_SIGNAL, false);
             currentHexColour = rgbHex;
             currentHexWWCW = wwcwHex;
         } else {
@@ -159,12 +160,29 @@ public class ZJ200Controller extends GenericLedController {
         
         if(hexColourString.length() == 6) {
             AppSystem.log(this.getClass(), "Setting " + deviceName + " colour to: " + hexColourString);
-            sendTCP(STROBE_CMD_HEADER + hexColourString + STROBE_END_PADDING, false);
+            sendTCP(STROBE_CMD_HEADER + adjustBrightness(hexColourString) + STROBE_END_PADDING, false);
             currentHexColour = hexColourString;
             
         } else {
             throw new LedException(this.getClass().getSimpleName(), "0010", "Hex colour has invalid length");
         }
+    }
+    
+    public String adjustBrightness(String hexColour) throws LedException {
+        System.out.println(hexColour.length());
+        System.out.println(hexColour.length() % 2);
+        if(hexColour.length() % 2 != 0) {
+            throw new LedException(this.getClass().getSimpleName(), "0011", "Unable to adjust brightness, hex colour has invalid length");
+        }
+        
+        String[] individualColours = hexColour.split("(?<=\\G.{2})");
+        StringBuilder finalHexColour = new StringBuilder();
+        for(String individualColour: individualColours) {
+            int colourValue = toColourInt(individualColour);
+            colourValue = (int) Math.floor(colourValue * brightnessMultipler);
+            finalHexColour.append(toColourHex(colourValue));
+        }
+        return finalHexColour.toString();
     }
 
     /* (non-Javadoc)
@@ -172,7 +190,10 @@ public class ZJ200Controller extends GenericLedController {
      */
     @Override
     public void setBrightness(String brightnessLevel) throws LedException {
-        AppSystem.log(this.getClass(), MODEL + " controller does not support this command");
+        currentBrightness = brightnessLevel;
+        brightnessMultipler = Double.parseDouble(brightnessLevel) / 100;
+        AppSystem.log(this.getClass(), "Setting " + deviceName + " brightness to " + brightnessLevel + "%");
+        setColour(currentHexColour + currentHexWWCW);
     }
 
     @Override

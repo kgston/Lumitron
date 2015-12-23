@@ -54,6 +54,7 @@ lumitron.events = (function() {
     });
     
     return {
-        registerEvents: registerEvents
+        registerEvents: registerEvents,
+        init: init
     };
 })();

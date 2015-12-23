@@ -30,8 +30,8 @@ public abstract class GenericLedController implements LedController {
     protected final int port;
     
     protected String currentState = "off";
-    protected String currentBrightness = "0";
-    protected String currentHexColour = "000000";
+    protected String currentBrightness = "10";
+    protected String currentHexColour = "FFFFFF";
     
     /**
      * Abstracted implementation of a LED controller for use with subclasses
@@ -134,7 +134,7 @@ public abstract class GenericLedController implements LedController {
      * @param colourValue Integer in the range of 0-255
      * @return Returns a hex representation of the colour in 2 characters
      */
-    private String toColourHex(int colourValue) {
+    protected String toColourHex(int colourValue) {
         if(colourValue < 0) {
             colourValue = 0;
         } else if(colourValue > 255) {
@@ -145,6 +145,19 @@ public abstract class GenericLedController implements LedController {
             colourHex = "0" + colourHex;
         }
         return colourHex;
+    }
+    
+    /**
+     * Converts from a 00-FF colour value to an int value
+     * @param colourHex Hex String in the range of 00-FF
+     * @return Returns a int representation of the value. Returns -1 if invalid length.
+     */
+    protected int toColourInt(String colourHex) {
+        if(colourHex.length() != 2) {
+            return -1;
+        }
+        int colourValue = Integer.parseInt(colourHex, 16);
+        return colourValue;
     }
     
     /**
