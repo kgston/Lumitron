@@ -6,8 +6,9 @@ lumitron.events = (function() {
     var registerEvents = function() {
         var events = lumitron.project.events;
         var params = {
-            "events": JSON.stringify(events)
-        }
+            "events": JSON.stringify(events),
+            "verbose": false
+        };
         return lumitron.request.send("ledevents", "play", params);
     };
     

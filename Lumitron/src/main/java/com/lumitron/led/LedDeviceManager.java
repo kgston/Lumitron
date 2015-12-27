@@ -174,6 +174,10 @@ public class LedDeviceManager {
                 break;
             case "setStrobe":
                 controller.setStrobe(params.get("colour"));
+                try {
+                    Thread.sleep(100);
+                } catch(Exception e) {}
+                controller.setColour(params.get("colour"));
                 break;
             case "setBrightness":
                 controller.setBrightness(params.get("brightness"));

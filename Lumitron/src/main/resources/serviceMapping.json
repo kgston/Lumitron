@@ -86,6 +86,10 @@
         "stop": {
             "serviceClass": "com.lumitron.ledevents.LedEventsService",
             "method": "stop"
+        },
+        "seek": {
+            "serviceClass": "com.lumitron.ledevents.LedEventsService",
+            "method": "seek"
         }
     }
 }

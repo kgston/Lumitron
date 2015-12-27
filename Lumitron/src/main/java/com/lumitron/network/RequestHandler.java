@@ -140,7 +140,11 @@ public class RequestHandler {
                 //Invoke the service requested
                 HashMap<String, String> serviceInfo = serviceMap.get(serviceRoute.get("domain")).get(serviceRoute.get("service"));
                 AppSystem.log(RequestHandler.class, "Receiving request for: " + serviceInfo);
-                AppSystem.log(RequestHandler.class, "With the following params: " + params);
+                if(params != null && params.get("verbose") != null && !Boolean.parseBoolean(params.get("verbose"))) {
+                    params.remove("verbose");
+                } else {
+                    AppSystem.log(RequestHandler.class, "With the following params: " + params);
+                }
                 
                 String serviceClassName = serviceMap.get(serviceRoute.get("domain")).get(serviceRoute.get("service")).get("serviceClass");
                 Class<?> serviceClass = null;
@@ -287,24 +291,23 @@ public class RequestHandler {
      */
     private static void send(String uuid, String type, HashMap<String, Object> response, boolean isComplete) {
         String jsonMsg = newResponse(uuid, type, response, isComplete);
-        try {
-            // Send response to session
+        // Send response to session
+        if(response != null && response.get("verbose") != null && (!(Boolean) response.get("verbose"))) {
+            response.remove("verbose");
+        } else {
             AppSystem.log(RequestHandler.class, "Returning response for <" + uuid + ">\n" + jsonMsg);
-            //Get the session based on the UUID
-            Session client = deliveryMap.get(uuid);
-            //Set the message on fire
-            if(client.isOpen()) {
-                client.getBasicRemote().sendText(jsonMsg);
-                //Remove the request from the map
-                if(isComplete) {
-                    deliveryMap.remove(uuid);
-                }
-            } else {
-                //Save the response to cache if the client connection is dead
-                saveToCache(uuid, type, response, isComplete);
-            }
         }
-        catch (IOException e) {
+        //Get the session based on the UUID
+        Session client = deliveryMap.get(uuid);
+        //Set the message on fire
+        if(client.isOpen()) {
+            client.getAsyncRemote().sendText(jsonMsg);
+            //Remove the request from the map
+            if(isComplete) {
+                deliveryMap.remove(uuid);
+            }
+        } else {
+            //Save the response to cache if the client connection is dead
             saveToCache(uuid, type, response, isComplete);
         }
     }

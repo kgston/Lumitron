@@ -22,4 +22,8 @@ public class LedEventsService implements LumitronService {
     public void stop() {
         RequestHandler.send(serviceRoute.get("uuid"), LedEventsHandler.stop());
     }
+    
+    public void seek() {
+        RequestHandler.send(serviceRoute.get("uuid"), LedEventsHandler.seek(params));
+    }
 }

@@ -1,11 +1,8 @@
 package com.lumitron.ledevents;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.lumitron.music.MusicHandler;
 
 public class LedEventsHandler {
     public static HashMap<String, Object> play(HashMap<String, String> params) {
@@ -13,7 +10,7 @@ public class LedEventsHandler {
         String events = params.get("events");
 
         // Load and play the events
-        LedEventsManager.load(deserializeLedEvents(events));
+        LedEventsManager.load(events);
         LedEventsManager.play();
 
         // Return the formatted response
@@ -33,10 +30,17 @@ public class LedEventsHandler {
 
         return response;
     }
+    
+    public static HashMap<String, Object> seek(HashMap<String, String> params) {
+        // Get the parameters
+        Long seekTo = Long.parseLong(params.get("seekTo"));
+        
+        LedEventsManager.seek(seekTo, MusicHandler.getCurrentPlaybackTime());
+        
+        // Return the formatted response
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("status", "Events has been seeked to " + seekTo / 1000 + " ms");
 
-    private static ArrayList<LedEvent> deserializeLedEvents(String ledEventsJson) {
-        Type eventListType = new TypeToken<ArrayList<LedEvent>>(){}.getType();
-        ArrayList<LedEvent> ledEvents = new Gson().fromJson(ledEventsJson, eventListType);
-        return ledEvents;
+        return response;
     }
 }

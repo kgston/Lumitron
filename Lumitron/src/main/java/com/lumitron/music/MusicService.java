@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.lumitron.network.LumitronService;
 import com.lumitron.network.RequestHandler;
-import com.lumitron.util.AppSystem;
 
 
 public class MusicService implements LumitronService {
@@ -35,6 +34,7 @@ public class MusicService implements LumitronService {
                     Long currentPlaybackInMicro = MusicHandler.getCurrentPlaybackTime();
                     response.put("currentPlaybackTime", convertTime(currentPlaybackInMicro));
                     response.put("currentPlaybackInMicro", currentPlaybackInMicro.toString());
+                    response.put("verbose", false);
                     RequestHandler.stream(serviceRoute.get("uuid"), response); //Stream it back to the UI
                 }
                 try {

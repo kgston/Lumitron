@@ -40,7 +40,10 @@ lumitron.music = $.extend(true, lumitron.music || {}, (function() {
     };
     
     var seek = function(timeInMicro) {
-        return lumitron.request.send("music", "seek", {seekTo: Math.floor(timeInMicro)});
+        return lumitron.request.send("ledevents", "seek", {seekTo: Math.floor(timeInMicro)})
+            .done(function() {
+                lumitron.request.send("music", "seek", {seekTo: Math.floor(timeInMicro)});
+            });
     };
     
     var seekEvent = function(event) {
