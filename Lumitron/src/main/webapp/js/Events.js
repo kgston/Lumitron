@@ -27,12 +27,20 @@ lumitron.events = (function() {
             .addHeaderColumn("Value");
             
         events.forEach(function(event) {
-            this.addRowSet()
-                .addRow()
-                .addRowColumn(toTime(event.time))
-                .addRowColumn(event.deviceName)
-                .addRowColumn(event.command)
-                .addRowColumn(JSON.stringify(event.params));
+            this.addRowSet();
+            Object.keys(event.params).forEach(function(paramKey, index) {
+                    this.addRow();
+                if(index === 0) {
+                    this.addRowColumn(toTime(event.time))
+                        .addRowColumn(event.deviceName)
+                        .addRowColumn(event.command);
+                } else {
+                    this.addRowColumn()
+                        .addRowColumn()
+                        .addRowColumn();
+                }
+                this.addRowColumn(paramKey + " -> " + event.params[paramKey]);
+            }.bind(this));
         }.bind(eventsTable));
         
         eventsTable.render(function(eventsTableFragment) {

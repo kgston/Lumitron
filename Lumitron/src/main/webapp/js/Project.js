@@ -298,13 +298,13 @@ lumitron.project = $.extend(true, lumitron.project || {}, (function () {
             {"deviceName":"Makimaki","time":138500,"command":"setStrobe","params":{"colour":"0000FF"}},
             {"deviceName":"Natsuki","time":138500,"command":"setStrobe","params":{"colour":"0000FF"}},
             {"deviceName":"Taichi","time":138500,"command":"setStrobe","params":{"colour":"0000FF"}},
-            {"deviceName":"Jumin","time":165000,"command":"setStrobe","params":{"colour":"000000"}},
-            {"deviceName":"Makimaki","time":165000,"command":"setStrobe","params":{"colour":"000000"}},
-            {"deviceName":"Natsuki","time":165000,"command":"setStrobe","params":{"colour":"000000"}},
-            {"deviceName":"Natsuki","time":165000,"command":"setStrobe","params":{"colour":"000000"}},
-            {"deviceName":"Taichi","time":165000,"command":"setStrobe","params":{"colour":"000000"}},
-            {"deviceName":"Fujiko","time":168000,"command":"setStrobe","params":{"colour":"000000"}},
-            {"deviceName":"Lupin","time":168000,"command":"setStrobe","params":{"colour":"000000"}}
+            {"deviceName":"Jumin","time":161512,"command":"setStrobe","params":{"colour":"000000"}},
+            {"deviceName":"Makimaki","time":161512,"command":"setStrobe","params":{"colour":"000000"}},
+            {"deviceName":"Natsuki","time":161512,"command":"setStrobe","params":{"colour":"000000"}},
+            {"deviceName":"Natsuki","time":161512,"command":"setStrobe","params":{"colour":"000000"}},
+            {"deviceName":"Taichi","time":161512,"command":"setStrobe","params":{"colour":"000000"}},
+            {"deviceName":"Fujiko","time":164000,"command":"setStrobe","params":{"colour":"000000"}},
+            {"deviceName":"Lupin","time":164000,"command":"setStrobe","params":{"colour":"000000"}}
         ]
     };
 })());
