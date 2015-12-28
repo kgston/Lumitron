@@ -29,7 +29,7 @@ lumitron.events = (function() {
         events.forEach(function(event) {
             this.addRowSet()
                 .addRow()
-                .addRowColumn(event.time)
+                .addRowColumn(toTime(event.time))
                 .addRowColumn(event.deviceName)
                 .addRowColumn(event.command)
                 .addRowColumn(JSON.stringify(event.params));
@@ -58,4 +58,19 @@ lumitron.events = (function() {
         registerEvents: registerEvents,
         init: init
     };
+    
+    function toTime(timeInMs) {
+        var ms = timeInMs % 1000;
+        var seconds = Math.floor(timeInMs / 1000 % 60);
+        var minutes = Math.floor(timeInMs / 1000 / 60 % 60);
+        var secondsString = seconds.toString();
+        if(secondsString.length == 1) {
+            secondsString = "0" + secondsString;
+        }
+        var msString = ms.toString();
+        while(msString.length < 3) {
+            msString = "0" + msString;
+        }
+        return minutes + ":" + secondsString + ":" + msString;
+    }
 })();
