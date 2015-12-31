@@ -2,13 +2,13 @@ var lumitron = lumitron || {};
 
 lumitron.opts = $.extend(true, lumitron.opts || {}, (function() {
     return {
-        debug: true,
+        debug: false,
         device: {
             search: {
                 sequencialSearchCount: 10,
                 timeout: 5000,
-                fromIP: "10.10.10.1",
-                toIP: "10.10.10.10"
+                fromIP: "10.10.1.1",
+                toIP: "10.10.1.10"
             },
             heartbeat: {
                 intervalLength: 5000

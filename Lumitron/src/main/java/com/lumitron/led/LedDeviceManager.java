@@ -184,6 +184,10 @@ public class LedDeviceManager {
                 break;
             case "transitionToColour":
                 controller.transitionToColour(params.get("pauseInterval"), params.get("incrementInterval"), params.get("colour"));
+                try {
+                    Thread.sleep(100);
+                } catch(Exception e) {}
+                controller.setColour(params.get("colour"));
                 break;
             default:
                 throw new LedException(LedDeviceManager.class.getSimpleName(), "0008", "Unknown command '" + command + "'");

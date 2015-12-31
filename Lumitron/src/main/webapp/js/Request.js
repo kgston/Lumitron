@@ -143,8 +143,8 @@ lumitron.request = $.extend(true, lumitron.request || {}, (function() {
         var deferred = jQuery.Deferred();
         
         //FOR TESTING USE
-        deferred.promise().always(function() {
-            $("#pushedItems").text(event.data);
+        deferred.promise().always(function(response) {
+            $("#pushedItems").text(JSON.stringify(response));
         });
         
         //Store request
