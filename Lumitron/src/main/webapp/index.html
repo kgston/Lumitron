@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 
 <html>
+
 <head>
     <meta charset="UTF-8">
-	<title>Lumitron</title>
-	
-	<link rel="stylesheet" href="css/stencilTemplates.css">
-	<link rel="stylesheet" href="css/lumitron.css">
-	<script src="js/jquery-2.1.4.js"></script>
+    <title>Lumitron</title>
+
+    <link rel="stylesheet" href="css/stencilTemplates.css">
+    <link rel="stylesheet" href="css/lumitron.css">
+    <script src="js/jquery-2.1.4.js"></script>
     <script src="js/stencil.js"></script>
     <script src="js/stencilTemplates.js"></script>
     <script src="js/Lumitron.js"></script>
@@ -21,12 +22,12 @@
 <body>
     <div id="titleBar" class="titleBar">
         <div class="titleGroupLeft">
-            <img id="icon" class="svg iconLarge pointer" src="css/icons/Entypo/menu.svg"/>
+            <img id="icon" class="svg iconLarge pointer" src="css/icons/Entypo/menu.svg" />
             <h1 class="orangeGlowFont">Lumitron</h1>
         </div>
         <div id="serverState" class="titleGroupRight">
             <stencil id="serverStatusStencil">
-                <img class="svg iconSmall pointer {{class}}" src="css/icons/Entypo/{{icon}}"/>
+                <img class="svg iconSmall pointer {{class}}" data-stencil-imgsrc="icon" />
             </stencil>
         </div>
         <div class="orangeGlowLine"></div>
@@ -35,7 +36,7 @@
         <div id="devicesPanel">
             <div class="subHeader">
                 <h3 class="whiteGlowFont">Active</h3>
-                <img id="refreshRegisteredBtn" class="svg iconXXSmall pointer" src="css/icons/Entypo/cycle.svg"/>
+                <img id="refreshRegisteredBtn" class="svg iconXXSmall pointer" src="css/icons/Entypo/cycle.svg" />
             </div>
             <div class="greyThinLine"></div>
             <div id="registeredDevices" class="devicesPanel">
@@ -44,8 +45,8 @@
                         <div class="deviceTitle">
                             <h3 class="whiteGlowFont deviceName">{{name}}</h3>
                             <div class="deviceStatuses">
-                                <img class="connectionStrength svg iconXSmall pointer" src="css/icons/Entypo/progress-full.svg"/>
-                                <img class="deregister svg iconXSmall pointer" src="css/icons/Entypo/minus.svg"/>
+                                <img class="connectionStrength svg iconXSmall pointer" src="css/icons/Entypo/progress-full.svg" />
+                                <img class="deregister svg iconXSmall pointer" src="css/icons/Entypo/minus.svg" />
                             </div>
                         </div>
                         <div class="infoPanel">
@@ -59,12 +60,12 @@
                             <div class="infoValues">
                                 <span>{{model}}</span>
                                 <span>{{ipAddress}}</span>
-                                <select class="state" data-stencilSelector="state">
+                                <select class="state" data-stencil-selector="state">
                                     <option value="off">Off</option>
                                     <option value="on">On</option>
                                 </select>
-                                <input class="brightness" type="text" value="{{brightness}}" placeholder="Unknown"/>
-                                <input class="colour" type="text" value="{{colour}}" placeholder="Unknown"/>
+                                <input class="brightness" type="text" value="{{brightness}}" placeholder="Unknown" />
+                                <input class="colour" type="text" value="{{colour}}" placeholder="Unknown" />
                             </div>
                         </div>
                         <div class="controlPanel">
@@ -75,16 +76,16 @@
             </div>
             <div class="subHeader">
                 <h3 class="whiteGlowFont">Inactive</h3>
-                <img id="refreshAvaliableBtn" class="svg iconXXSmall pointer" src="css/icons/Entypo/cycle.svg"/>
+                <img id="refreshAvaliableBtn" class="svg iconXXSmall pointer" src="css/icons/Entypo/cycle.svg" />
             </div>
             <div class="greyThinLine"></div>
             <div id="avaliableDevices" class="devicesPanel">
-                <stencil id="avaliableDevicesStencil" data-childStencil="deviceControllers">
+                <stencil id="avaliableDevicesStencil" data-stencil-childs="deviceControllers">
                     <div class="device">
                         <div class="deviceTitle">
                             <h3 class="whiteGlowFont deviceIP">{{ipAddress}}</h3>
                             <div class="deviceStatuses">
-                                <img class="svg iconXSmall pointer registerDeviceBtn" src="css/icons/Entypo/plus.svg"/>
+                                <img class="svg iconXSmall pointer registerDeviceBtn" src="css/icons/Entypo/plus.svg" />
                             </div>
                         </div>
                         <div class="infoPanel">
@@ -94,7 +95,7 @@
                                 <span>Model</span>
                             </div>
                             <div class="infoValues">
-                                <input class="deviceName" type="text" value="" placeholder="My Device"/>
+                                <input class="deviceName" type="text" value="" placeholder="My Device" />
                                 <span>{{macAddress}}</span>
                                 <select id="deviceControllers" class="deviceModel">
                                     <option value="{{name}}" {{options}}>{{name}}</option>

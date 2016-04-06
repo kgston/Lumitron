@@ -1,12 +1,20 @@
 /* global stencil */
 /*
-stencilTemplates.js
-version 1
+@preserve stencilTemplates.js
+version 1.0.0
 Kingston Chan - Released under the MIT licence
 */
+
 var stencilTemplates = stencilTemplates || {};
 
-stencilTemplates = (function() {
+stencilTemplates.opts = $.extend(stencilTemplates.opts || {}, (function() {
+    return {
+        debug: true,
+        templatesPath: "js/stencilTemplates"
+    };
+})());
+
+var stencilTemplates = $.extend(stencilTemplates, (function() {
     //Template stencil objects
     var templates = {
         table: {
@@ -854,13 +862,14 @@ stencilTemplates = (function() {
     
     var init = function() {
         Object.keys(templates).forEach(function(template) {
-            $.ajax({
-                url: stencilTemplates.opts.templatesPath + "/" + template + ".stencilTemplate",
-                dataType: "html"
-            }).done(function(templateHTML) {
-                templates[template].stencil = stencil.define(templates[template].id, "none", null, $(templateHTML));
-                templates[template].templateLoader.resolve();
-            });
+            stencil.fetch(stencilTemplates.opts.templatesPath + "/" + template + ".stencilTemplate")
+                .progress(function templateFetchProgress(stencilTemplate) {
+                    templates[template].id = stencilTemplate.tagID;
+                    templates[template].stencil = stencilTemplate;
+                })
+                .done(function templateFetchComplete() {
+                    templates[template].templateLoader.resolve();
+                });
         });
     }
     
@@ -872,18 +881,18 @@ stencilTemplates = (function() {
             return;
         }
         init();
-        console.log(templates);
+        stencilTemplates.util.log(templates);
     });
     
     return {
         table: templates.table.builder
     };
-})();
+})());
 
-stencilTemplates.util = (function() {
+stencilTemplates.util = $.extend(stencilTemplates.util || {}, (function() {
     return {
         log: function(message, isCritical) {
-            if(this.opts.debug) {
+            if(stencilTemplates.opts.debug) {
                 console.log("[debug] Stencil Templates: " + message);
             } else if(isCritical) {
                 console.log("Stencil Templates: " + message);
@@ -893,11 +902,5 @@ stencilTemplates.util = (function() {
             return JSON.parse(JSON.stringify(json));
         },
     };
-})();
+})());
 
-stencilTemplates.opts = (function() {
-    return {
-        debug: true,
-        templatesPath: "js/stencilTemplates"
-    };
-})();
