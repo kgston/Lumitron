@@ -17,7 +17,7 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
         availableDevicesStencil.clear();
         
         var searchSettings = lumitron.opts.device.search;
-        var sequencialSearchCount = searchSettings.sequencialSearchCount;
+        var sequentialSearchCount = searchSettings.sequentialSearchCount;
         var searchTimeout = searchSettings.timeout;
         var fromIPOctets = toIntArray(fromIP.split("."));
         var toIPOctets = toIntArray(toIP.split("."));
@@ -29,15 +29,15 @@ lumitron.device = $.extend(true, lumitron.device || {}, (function() {
         
         function checkIpReachable(ipAddress) {
             var delayedExecution = $.Deferred();
-            if(sequencialSearchCount > 0) {
-                sequencialSearchCount--;
+            if(sequentialSearchCount > 0) {
+                sequentialSearchCount--;
                 var params = {
                     "ipAddress": ipAddress,
                     "timeout": searchTimeout
                 };
                 return lumitron.request.send("network", "isIpReachable", params)
                     .done(function(response) {
-                        sequencialSearchCount++;
+                        sequentialSearchCount++;
                     });
             } else {
                 delayedExecution.timeoutId = setTimeout(function() {

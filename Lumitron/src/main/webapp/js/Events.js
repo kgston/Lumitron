@@ -14,37 +14,39 @@ lumitron.events = (function() {
     
     var init = function() {
         var events = lumitron.project.events;
-        eventsTable = stencilTemplates.table("eventsTable");
-        eventsTable
-            .enableSort(true, [0, 1, 2])
-            .enablePaginate(13)
-            .enableSearch()
+        stencilTemplates.init("table").done(function() {
+            eventsTable = stencilTemplates.table("eventsTable");
+            eventsTable
+                .enableSort(true, [0, 1, 2])
+                .enablePaginate(13)
+                .enableSearch()
+                
+                .addHeaderRow(null, "deviceTitle whiteGlowFont tableHeader")
+                .addHeaderColumn("Time", "")
+                .addHeaderColumn("Device")
+                .addHeaderColumn("Event")
+                .addHeaderColumn("Value");
+                
+            events.forEach(function(event) {
+                this.addRowSet();
+                Object.keys(event.params).forEach(function(paramKey, index) {
+                        this.addRow();
+                    if(index === 0) {
+                        this.addRowColumn(toTime(event.time))
+                            .addRowColumn(event.deviceName)
+                            .addRowColumn(event.command);
+                    } else {
+                        this.addRowColumn()
+                            .addRowColumn()
+                            .addRowColumn();
+                    }
+                    this.addRowColumn(paramKey + " -> " + event.params[paramKey]);
+                }.bind(this));
+            }.bind(eventsTable));
             
-            .addHeaderRow(null, "deviceTitle whiteGlowFont tableHeader")
-            .addHeaderColumn("Time", "")
-            .addHeaderColumn("Device")
-            .addHeaderColumn("Event")
-            .addHeaderColumn("Value");
-            
-        events.forEach(function(event) {
-            this.addRowSet();
-            Object.keys(event.params).forEach(function(paramKey, index) {
-                    this.addRow();
-                if(index === 0) {
-                    this.addRowColumn(toTime(event.time))
-                        .addRowColumn(event.deviceName)
-                        .addRowColumn(event.command);
-                } else {
-                    this.addRowColumn()
-                        .addRowColumn()
-                        .addRowColumn();
-                }
-                this.addRowColumn(paramKey + " -> " + event.params[paramKey]);
-            }.bind(this));
-        }.bind(eventsTable));
-        
-        eventsTable.render(function(eventsTableFragment) {
-            $("#eventsTable").replaceWith(eventsTableFragment);
+            eventsTable.render(function(eventsTableFragment) {
+                $("#eventsTable").replaceWith(eventsTableFragment);
+            });
         });
     };
     
