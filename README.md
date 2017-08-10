@@ -46,9 +46,6 @@ While no one really like to follow rules, let try to keep a few important ones t
 11. App is accessable at <http://localhost:8080/Lumitron>
 12. If you have eclipse project issues, go to the Gradle Tasks window abd run the eclipseClasspath task. E.g. If it complains it cannot find class or etc...
 
-## Final notes
-While I sometimes like to think I'm a coding god, reality is tougher than it seems... So like everyone else, I'm learning new things everyday. And while I'm supposed to "lead" the project, I'll probably make rookie mistakes every now and then or ask stupid questions during pull request, so please be patient with me. I'll try to be smart 80% of the time.. haha... :D
-
 ## Contribuitors
 - Kingston Chan
 - Christophe Michard
